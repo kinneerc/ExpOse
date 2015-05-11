@@ -11,7 +11,7 @@ public class DoublingExperimentParams{
         public double convergence = .4;
 
     @Parameter(names = {"-o","-out","-csv"}, description = "Name of the csv file to save data to")
-        public String csv = "DEFAULT";
+        public String csv = "LastExperiment.csv.tmp";
 
     @Parameter(names = {"-noTune"}, description = "Disable trying to break out of O(1)")
         public boolean tuning = false;
