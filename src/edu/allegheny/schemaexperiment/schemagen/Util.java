@@ -12,36 +12,48 @@ public class Util{
         System.out.println();
     }
 
-    protected static int[] group(int groups, int individuals){
+    /**
+     *  Given a list of split points, return a frequency table
+     */
+    protected static int[] group(int[] splitPoints){
 
-        int ans[]= new int[groups];
+        Arrays.sort(splitPoints);
 
-        ArrayList<Integer> splitpoints = groupSplitPoints(groups,individuals);
+        int[] ans = new int[splitPoints.length];
 
-        // given a list of split points, calculate population for each group
+         // given a list of split points, calculate population for each group
         int gi = 0;
         int ii = 0;
-        for (int sp : splitpoints){
+        for (int sp : splitPoints){
             ans[gi++] = sp - ii;
             ii = sp;
         }
-        // assign anything after last sp to final group
-        ans[gi] = individuals - ii;
 
         return ans;
 
     }
 
-    private static ArrayList<Integer> groupSplitPoints(int groups,int individuals){
+    protected static int[] group(int groups, int individuals){
 
-        ArrayList<Integer> ans = new ArrayList<Integer>();
+        int[] splitpoints = groupSplitPoints(groups,individuals);
+       
+        return group(splitpoints);
+
+    }
+
+    protected static int[] groupSplitPoints(int groups,int individuals){
+
+        int[] ans = new int[groups];
 
         Random rand = new Random();
         for (int i = 0; i < groups-1; i++){
-            ans.add(rand.nextInt(individuals+1));
+            ans[i] = (rand.nextInt(individuals+1));
         }
 
-        Collections.sort(ans);
+        // need at least one split point at the end to guarentee the entire set is included
+        ans[groups-1] = individuals;
+
+        Arrays.sort(ans);
 
         return ans;
 
