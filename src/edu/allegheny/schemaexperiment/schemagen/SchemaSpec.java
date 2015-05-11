@@ -45,7 +45,7 @@ public class SchemaSpec{
             // first, create some lists for constraints to which columns may belong
             ArrayList<Column> pkey = new ArrayList<Column>();
             for (int c = 0; c < columnsPtable[t]; c++){
-                Column currentColumn = curTab.createColumn("rc",dataType(datatypes[curCol]));
+                Column currentColumn = curTab.createColumn("Column "+curCol,dataType(datatypes[curCol]));
                 tabLookup.put(currentColumn,curTab);
                 allColumns.add(currentColumn);
                 // check if this column belongs to a primary key
