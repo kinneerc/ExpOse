@@ -1,0 +1,9 @@
+*.jar
+*.class
+*.swp
+*.log
+*.tmp
+bin
+lib
+.classpath
+.project
