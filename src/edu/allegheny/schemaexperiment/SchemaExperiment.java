@@ -1,0 +1,160 @@
+package edu.allegheny.schemaexperiment;
+
+import org.schemaanalyst.data.ValueFactory;
+import org.schemaanalyst.data.generation.DataGenerator;
+import org.schemaanalyst.data.generation.DataGeneratorFactory;
+import org.schemaanalyst.mutation.analysis.util.SchemaMerger;
+import org.schemaanalyst.sqlrepresentation.Schema;
+import org.schemaanalyst.testgeneration.TestSuiteGenerator;
+import org.schemaanalyst.testgeneration.coveragecriterion.CoverageCriterion;
+import org.schemaanalyst.testgeneration.coveragecriterion.CoverageCriterionFactory;
+import org.schemaanalyst.dbms.mysql.MySQLDBMS;
+
+import com.beust.jcommander.JCommander;
+
+import edu.allegheny.expose.*;
+import edu.allegheny.schemaexperiment.doubler.SchemaDoubler;
+import edu.allegheny.schemaexperiment.doubler.SchemaDoublerException;
+
+public class SchemaExperiment extends DoublingExperiment{
+
+    SchemaDoubler doubler;
+    CoverageCriterion criterionObject;
+    DataGenerator dataGeneratorObject; 
+    TestSuiteGenerator testSuiteGenerator;
+    SchemaExpParams params;
+    Schema n;
+
+    static final String[] CSVHEADER = {"Doubles","Time","Schema","Criterion",
+        "DataGenerator","Doubler"}; 
+
+    public static void main(String[] args){
+
+        SchemaExpParams params = new SchemaExpParams();
+        new JCommander(params,args);
+
+        String schema;
+        if (params.schema != null){
+            schema = params.schema;
+        }else{
+            schema = "iTrustBioSQLMerged";
+        }
+
+        if (params.csv.equals("DEFAULT")){
+            params.csv = "data/DATA"+params.schema+"_"+params.criterion+"_"+params.datagenerator+"_"+params.doubler+".csv";
+        }
+            
+        String[] settings = {schema,params.criterion,params.datagenerator,params.doubler};
+
+        SchemaExperiment exp = new SchemaExperiment(params, args, settings);
+        
+        
+
+        try {
+            exp.doubler = instantiateSchemaDoubler(params.doublerPackage+params.doubler);
+        } catch (ClassNotFoundException | InstantiationException
+                | IllegalAccessException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+
+        if (params.schema == null){
+            Schema one = new parsedcasestudy.iTrust();
+            Schema two = new parsedcasestudy.BioSQL();
+            exp.n = SchemaMerger.merge(one, two);
+        }else{
+
+            try {
+                exp.n = instantiateSchema(params.schemaPackage+params.schema);
+            } catch (InstantiationException | IllegalAccessException
+                    | ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                    }
+
+        }
+
+        exp.doubler.setSchema(exp.n);
+
+        exp.runExperiment();
+
+        exp.data.writeMetafile(exp.termCode, exp.runTime, schema, params.criterion, params.datagenerator, params.doubler);
+
+        if (params.verbose){
+        ReverseEngineer eng = new ReverseEngineer();
+        eng.loadData(exp.getData());
+
+        BigOh ans = eng.analyzeData();
+
+        System.out.println(ans);
+        }
+
+    }
+
+    public SchemaExperiment(SchemaExpParams params, String[] args, String[] settings){
+        super(params,args,CSVHEADER,settings);
+        this.params = params;
+    }
+
+    protected static SchemaDoubler instantiateSchemaDoubler(String schemaDoubler)
+        throws ClassNotFoundException, InstantiationException,
+                          IllegalAccessException {
+                   Class<?> c = Class.forName(schemaDoubler);
+                   SchemaDoubler readIn = (SchemaDoubler) c.newInstance();
+
+                   return readIn;
+
+    }
+
+    protected static Schema instantiateSchema(String schema)
+        throws InstantiationException, IllegalAccessException,ClassNotFoundException {
+
+        Class<?> c = Class.forName(schema);
+        Schema readIn = (Schema) c.newInstance();
+
+        return readIn;
+
+
+    }
+
+    protected void initN(){
+    }
+    public void doubleN(){
+        try {
+            doubler.doubleSchema();
+        } catch (SchemaDoublerException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        n = doubler.getSchema();
+    }
+    public double timedTest(){
+
+        // instantiate objects for parameters
+        criterionObject = CoverageCriterionFactory.instantiateSchemaCriterion(params.criterion,n,new MySQLDBMS());
+        dataGeneratorObject = DataGeneratorFactory.instantiate(params.datagenerator, 0L, 10000, n);
+
+        // generate the test suites
+        testSuiteGenerator = new TestSuiteGenerator(
+                n,
+                criterionObject.generateRequirements(),
+                new ValueFactory(),
+                dataGeneratorObject);
+
+        long startTime = System.nanoTime();
+
+
+        testSuiteGenerator.generate();
+
+
+        long endTime = System.nanoTime();
+
+        if (params.verbose)
+        System.out.println("Time = "+(endTime-startTime));
+
+        return (double) endTime - startTime;
+
+    }
+
+
+}
