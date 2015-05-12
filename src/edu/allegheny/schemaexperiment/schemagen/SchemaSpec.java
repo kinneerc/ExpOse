@@ -1,7 +1,5 @@
 package edu.allegheny.schemaexperiment.schemagen;
 
-
-
 import org.schemaanalyst.sqlrepresentation.*;
 import org.schemaanalyst.sqlrepresentation.datatype.*;
 import java.util.*;
@@ -17,6 +15,16 @@ public class SchemaSpec{
     private List<ForiegnKeySpec> foriegnKey;
 
     private List<UniqueSpec> unique;
+
+    public SchemaSpec(int tables,int[] colSplitPoints,int[] datatypes, boolean[] primaryKey, boolean[] notNull, List<ForiegnKeySpec> fkeys, List<UniqueSpec> unique){
+        this.tables = tables;
+        this.columns = columns;
+        this.datatypes = datatypes;
+        this.primaryKey = primaryKey;
+        this.notNull = notNull;
+        this.foreignKey = fkeys;
+        this.unique = unique;
+    }
 
     // how to handle check constraints?
     
