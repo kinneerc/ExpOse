@@ -48,9 +48,16 @@ public class Util{
 
         int[] ans = new int[groups];
 
+        HashSet<Integer> points = new HashSet<Integer>();
+
         Random rand = new Random();
         for (int i = 0; i < groups-1; i++){
-            ans[i] = (rand.nextInt(individuals+1));
+            int nextSP;
+            do{
+            nextSP = rand.nextInt(individuals-1)+1;
+            }while(points.contains(nextSP));
+            points.add(nextSP);
+            ans[i] = nextSP;
         }
 
         // need at least one split point at the end to guarentee the entire set is included
