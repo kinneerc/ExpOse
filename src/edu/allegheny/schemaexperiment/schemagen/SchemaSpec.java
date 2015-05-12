@@ -120,6 +120,8 @@ public class SchemaSpec{
             }else{
                  throw new SchemaGenException("Illegal ForiegnKey Spec.");
             }
+
+            //TODO checks
         }
 
 

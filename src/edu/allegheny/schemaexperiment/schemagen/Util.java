@@ -41,6 +41,9 @@ public class Util{
 
     }
 
+    /**
+     * Make random split points dividing indiviuals into groups
+     */
     protected static int[] groupSplitPoints(int groups,int individuals){
 
         int[] ans = new int[groups];
