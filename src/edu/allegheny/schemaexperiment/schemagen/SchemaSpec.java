@@ -18,11 +18,11 @@ public class SchemaSpec{
 
     public SchemaSpec(int tables,int[] colSplitPoints,int[] datatypes, boolean[] primaryKey, boolean[] notNull, List<ForiegnKeySpec> fkeys, List<UniqueSpec> unique){
         this.tables = tables;
-        this.columns = columns;
+        this.columns = colSplitPoints;
         this.datatypes = datatypes;
         this.primaryKey = primaryKey;
         this.notNull = notNull;
-        this.foreignKey = fkeys;
+        this.foriegnKey = fkeys;
         this.unique = unique;
     }
 
