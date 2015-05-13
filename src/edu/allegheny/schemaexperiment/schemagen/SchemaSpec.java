@@ -98,8 +98,13 @@ public class SchemaSpec{
                 Table st = tabLookup.get(allColumns.get(f.getSourceColumns().get(0)));
             for (Integer s : f.getSourceColumns()){
                 Column curColumn = allColumns.get(s);
-                 if (st != tabLookup.get(curColumn))
+                 if (st != tabLookup.get(curColumn)){
+                     System.err.println(f);
+                     for (int count = 0; count < columnsPtable.length; count++){
+                         System.err.print(columnsPtable[count]);
+                     }
                      throw new SchemaGenException("Cannot create compound fkey across tables.");
+                 }
 
                  sc.add(curColumn);
                  

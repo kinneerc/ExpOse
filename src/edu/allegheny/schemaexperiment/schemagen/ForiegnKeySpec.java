@@ -3,6 +3,7 @@ package edu.allegheny.schemaexperiment.schemagen;
 import java.util.*;
 
 public class ForiegnKeySpec {
+    
     List<Integer> sourceColumns;
     List<Integer> destColumns;
 
@@ -16,5 +17,8 @@ public class ForiegnKeySpec {
     }
     public List<Integer> getDestColumns(){
         return destColumns;
+    }
+    public String toString(){
+        return "Source: "+sourceColumns + "\nDest: "+destColumns;
     }
 }
