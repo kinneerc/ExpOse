@@ -66,8 +66,6 @@ public class PotentialForeignKey {
        return (new CycleSearch(hypoG)).hasCycle();
     }
 
-
-
     public class CycleSearch {
     private boolean[] marked;        
     private int[] edgeTo;            
@@ -182,8 +180,6 @@ public class PotentialForeignKey {
         Table sourceT = getTable(this.source);
         sourceT.connections.add(getTable(this.dest));
         
-        System.out.println(this.source+"=>"+this.dest);
-
         // now that we've add all of the columns, return a ForeignKeySpec
         return new ForiegnKeySpec(scols,dcols);
     }

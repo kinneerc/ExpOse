@@ -101,8 +101,6 @@ public class Generator{
 
            int ncols = rand.nextInt(pfk.getMaxSize())+1;
            
-           System.out.println(pfk.source+"=>"+pfk.dest);
-
            fkeys.add(pfk.getBySize(ncols));
            }
 
