@@ -83,18 +83,28 @@ public class Generator{
         // consider all the possible keys
        List<PotentialForeignKey> pfks = fkg.getAllPotFKeys();
 
-       if (pfks.size() < foriegnKeys)
-           throw new SchemaGenException("Cannot provide requested FKeys");
+       
 
        // FIXME move this inside the for loop to allow for more than 1 key from s to d
        Collections.shuffle(pfks);
 
        for (int count = 0; count < foriegnKeys; count++){
-           PotentialForeignKey pfk = pfks.get(count);
+           if (pfks.size() < foriegnKeys-fkeys.size())
+           throw new SchemaGenException("Cannot provide requested FKeys");
+
+           PotentialForeignKey pfk = pfks.remove(0);
+
+           if(pfk.createsCycle()){
+               // redo this selection
+               count--;
+           }else{
 
            int ncols = rand.nextInt(pfk.getMaxSize())+1;
+           
+           System.out.println(pfk.source+"=>"+pfk.dest);
 
            fkeys.add(pfk.getBySize(ncols));
+           }
 
        }
     

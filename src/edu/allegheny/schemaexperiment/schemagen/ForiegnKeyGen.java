@@ -16,8 +16,12 @@ public class ForiegnKeyGen {
     // stores datatype frequency for each table
     HashMap<Integer,HashMap<Integer,List<Column>>> typeTables;
 
+    // stores table graph for dependency detection
+    ArrayList<Table> graph;
+
     public ForiegnKeyGen(){
         typeTables = new HashMap<Integer,HashMap<Integer,List<Column>>>();
+        graph = new ArrayList<Table>();
         columnCount = 0;
     }
 
@@ -44,7 +48,7 @@ public class ForiegnKeyGen {
 
     public PotentialForeignKey getPotFKey(int source, int dest){
 
-        return new PotentialForeignKey(source,dest,getMatchTab(source,dest),typeTables.get(source), typeTables.get(dest));
+        return new PotentialForeignKey(source,dest,graph,getMatchTab(source,dest),typeTables.get(source), typeTables.get(dest));
 
     }
 
@@ -99,6 +103,12 @@ public class ForiegnKeyGen {
     }
 
     public void put(int table,int datatype){
+
+        if(graph.size()<table+1){
+            Table t = new Table(table);
+            graph.add(t);
+        }
+
         if(!typeTables.containsKey(table))
              typeTables.put(table,new HashMap<Integer,List<Column>>());
         
@@ -108,7 +118,7 @@ public class ForiegnKeyGen {
         if (!typeTable.containsKey(datatype))
             typeTable.put(datatype,new ArrayList<Column>());
 
-        Column ccol = new Column();
+        Column ccol = new Column(table);
         ccol.datatype = datatype;
         ccol.name = columnCount++;
 
@@ -116,22 +126,41 @@ public class ForiegnKeyGen {
 
        }
 
+    public static class Table {
+        public int name;
+        public ArrayList<Table> connections;
+
+        public Table(int name){
+        	this.name = name;
+            connections = new ArrayList<Table>();
+        }
+
+        @SuppressWarnings("unchecked")
+        public Table clone(){
+            Table t = new Table(name);
+            t.connections = (ArrayList<Table>) connections.clone();
+            return t;
+        }
+    }
+
     public static class Column {
+        public int table;
         public int datatype;
         public int name;
         // store all of the tables that this column points to as an fkey 
-        public ArrayList<Integer> tabDests;
+        public HashSet<Integer> tabDests;
 
-        public Column(){
-            tabDests = new ArrayList<Integer>();
+        public Column(int table){
+            tabDests = new HashSet<Integer>();
+            this.table = table;
         }
 
         public boolean availible(int dest){
             return !tabDests.contains(dest);
         }
 
-        public void inKey(int dest){
-            tabDests.add(dest);
+        public void inKey(Column dest){
+            tabDests.add(dest.table);
         }
 
     }
