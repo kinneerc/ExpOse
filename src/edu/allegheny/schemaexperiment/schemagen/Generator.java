@@ -9,8 +9,8 @@ public class Generator{
 
     public static void main(String[] args){
 
-        if(args.length != 5){
-            System.out.println("Usage - 5 args: int tables, int columns, int notnulls, int primaryKeys, int foriegnKeys");
+        if(args.length != 6){
+            System.out.println("Usage - 6 args: int tables, int columns, int notnulls, int primaryKeys, int foriegnKeys, int uniques");
         }else{
 
         int[] iargs = new int[args.length];
@@ -18,9 +18,11 @@ public class Generator{
             iargs[count] = Integer.parseInt(args[count]);
         }
 
-        SchemaSpec sp = randomSchema(iargs[0],iargs[1],iargs[2],iargs[3],iargs[4],0,0);
+        SchemaSpec sp = randomSchema(iargs[0],iargs[1],iargs[2],iargs[3],iargs[4],iargs[5],0);
 
         Schema s = sp.getSchema();
+        
+        System.out.println("Generator done!");
 
         SQLWriter writer = new SQLWriter();
 
@@ -32,8 +34,11 @@ public class Generator{
     }
 
     // FKEYS: will make compound keys according to a uniform distribution (just like PKeys) 
-    public static SchemaSpec randomSchema(int tables, int columns, int notnulls, int primaryKeys, int foriegnKeys, int checks, int uniques){
+    public static SchemaSpec randomSchema(int tables, int columns, int notnulls, int primaryKeys, int foriegnKeys, int uniques,int checks){
 
+    	if (columns < tables)
+    		throw new SchemaGenException("More tables than columns, tables cannot be empty.");
+    	
         Random rand = new Random();
         ForiegnKeyGen fkg = new ForiegnKeyGen();
 
@@ -80,21 +85,15 @@ public class Generator{
 
         ArrayList<ForiegnKeySpec> fkeys = new ArrayList<ForiegnKeySpec>();
 
-        // consider all the possible keys
-       List<PotentialForeignKey> pfks = fkg.getAllPotFKeys();
-
+       Iterator<PotentialForeignKey> pfks = fkg.iterator();
        
-
-       // FIXME move this inside the for loop to allow for more than 1 key from s to d
-       Collections.shuffle(pfks);
-
        for (int count = 0; count < foriegnKeys; count++){
-           if (pfks.size() < foriegnKeys-fkeys.size())
+           if (!pfks.hasNext())
            throw new SchemaGenException("Cannot provide requested FKeys");
 
-           PotentialForeignKey pfk = pfks.remove(0);
+           PotentialForeignKey pfk = pfks.next();
 
-           if(pfk.createsCycle()){
+           if(pfk.createsCycle()||pfk.getMaxSize()==0){
                // redo this selection
                count--;
            }else{
@@ -105,12 +104,24 @@ public class Generator{
            }
 
        }
+
+       ArrayList<UniqueSpec> uqs = new ArrayList<UniqueSpec>();
     
-        // TODO  uniques, and checks
+       // finally, the uniques
+        for(int count = 0; count < uniques; count++){
+            PotentialUnique pu;
+            int tries = 0;
+            do{
+                if (tries++ > 1.5*tables)
+                    throw new SchemaGenException("Could not provide requested UNIQUES.");
+                pu = fkg.getPotUnique(rand.nextInt(tables));
+            }while(pu.getMaxSize()==0);
+            uqs.add(pu.getUniqueBySize(rand.nextInt(pu.getMaxSize())+1));
+        }
 
+        // TODO  checks
 
-
-        return new SchemaSpec(tables,colSplitPoints,colDataType,pkeys,notNulls,fkeys,new ArrayList<UniqueSpec>());
+        return new SchemaSpec(tables,colSplitPoints,colDataType,pkeys,notNulls,fkeys,uqs);
         
     }
 

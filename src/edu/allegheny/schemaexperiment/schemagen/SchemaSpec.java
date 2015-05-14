@@ -77,7 +77,7 @@ public class SchemaSpec{
         // first, uniques
         for (UniqueSpec u : unique){
             ArrayList<Column> cols = new ArrayList<Column>();
-            if (cols.size()>0){
+            if (u.columns.size()>0){
             Table t = tabLookup.get(allColumns.get(u.getColumns().get(0)));
             for (Integer c : u.getColumns()){
                 Column curColumn = allColumns.get(c);

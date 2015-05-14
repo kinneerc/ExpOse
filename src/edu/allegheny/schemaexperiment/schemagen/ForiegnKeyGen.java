@@ -9,41 +9,28 @@ import java.util.*;
  * note, we will only allow a column to be involved in a single fkey
  * going from tab 1 - tab 2
  */
-public class ForiegnKeyGen {
+public class ForiegnKeyGen implements Iterable<PotentialForeignKey> {
 
     int columnCount;
 
     // stores datatype frequency for each table
     HashMap<Integer,HashMap<Integer,List<Column>>> typeTables;
 
+    // stores a similar hashmap for making unques
+    HashMap<Integer,List<Column>> colTable;
+
     // stores table graph for dependency detection
     ArrayList<Table> graph;
 
     public ForiegnKeyGen(){
         typeTables = new HashMap<Integer,HashMap<Integer,List<Column>>>();
+        colTable = new HashMap<Integer,List<Column>>();
         graph = new ArrayList<Table>();
         columnCount = 0;
     }
 
-    public List<PotentialForeignKey> getAllPotFKeys(){
-        ArrayList<PotentialForeignKey> pfkeys = new ArrayList<PotentialForeignKey>();
-
-        // consider all table sources and destinations
-        for (int s : typeTables.keySet()){
-            for (int d : typeTables.keySet()){
-                // cant have an FKey to itself
-                if(s != d){
-                                    
-
-                PotentialForeignKey pfk = getPotFKey(s,d);
-                if(pfk.getMaxSize()>0)
-                    pfkeys.add(pfk);
-                }
-
-            }
-        }
-
-        return pfkeys;
+    public PotentialUnique getPotUnique(int table){
+        return new PotentialUnique(table,colTable.get(table));
     }
 
     public PotentialForeignKey getPotFKey(int source, int dest){
@@ -109,8 +96,10 @@ public class ForiegnKeyGen {
             graph.add(t);
         }
 
-        if(!typeTables.containsKey(table))
+        if(!typeTables.containsKey(table)){
              typeTables.put(table,new HashMap<Integer,List<Column>>());
+             colTable.put(table,new ArrayList<Column>());
+        }
         
 
         HashMap<Integer,List<Column>> typeTable = typeTables.get(table);
@@ -123,6 +112,7 @@ public class ForiegnKeyGen {
         ccol.name = columnCount++;
 
         typeTable.get(datatype).add(ccol);
+        colTable.get(table).add(ccol);
 
        }
 
@@ -164,5 +154,82 @@ public class ForiegnKeyGen {
         }
 
     }
+
+	@Override
+	public Iterator<PotentialForeignKey> iterator() {
+		
+	    class PotentialForeignKeys implements Iterator<PotentialForeignKey>{
+	    	
+	    	// for each source, contains all untaken destinations
+	    	public HashMap<Integer,ArrayList<Table>> pairTable;
+	    	public ArrayList<Table> sources;
+	    	
+	        @SuppressWarnings("unchecked")
+			public PotentialForeignKeys(){
+	        	pairTable = new HashMap<Integer,ArrayList<Table>>();
+	        	sources = (ArrayList<Table>) graph.clone();
+	        	Collections.shuffle(sources);
+	        	// so that its not empty, we'll build the entry for the first table as source
+	        	initTable(0);
+	        }
+	        
+	        public int getDest(int source){
+	        	// initialize if needed
+	        	initTable(source);
+	        	
+	        	int ans = pairTable.get(source).remove(0).name;
+	        	
+	        	if (pairTable.get(source).isEmpty()){
+	        		sources.remove(graph.get(source));
+	        		pairTable.remove(source);
+	        	}
+	        	
+	        	
+	        	return ans;
+	        
+	        }
+	        
+	        public void initTable(int tab){
+	        	
+	        	// if we have not already used every possible link with this source
+	        	// and if the pairTable does not have an entry for this source
+	        	if(sources.contains(graph.get(tab))&&!pairTable.containsKey(tab)){
+	        	
+	        	@SuppressWarnings("unchecked")
+				ArrayList<Table> nl = (ArrayList<Table>) graph.clone();
+	        	
+	        	// cannot link to self
+	        	nl.remove(graph.get(tab));
+	        	
+	        	Collections.shuffle(nl);
+	        	
+	        	pairTable.put(tab,nl);
+	        
+	        }
+	        }
+
+	         public boolean hasNext() {
+	        return !pairTable.isEmpty();
+	    }
+
+	    public PotentialForeignKey next() {
+	        if(this.hasNext()) {
+	        	Random rand = new Random();
+	        	int source = sources.get(rand.nextInt(sources.size())).name;
+	        	int dest = getDest(source);
+	        	
+	        	return getPotFKey(source,dest);
+	           
+	        }
+	        throw new NoSuchElementException();
+	    }
+
+	    public void remove() {
+	        throw new UnsupportedOperationException();
+	    }
+	    }
+		
+		return new PotentialForeignKeys();
+	}
 
 }
