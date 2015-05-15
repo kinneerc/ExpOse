@@ -34,6 +34,9 @@ public class DoublingExperimentParams{
     @Parameter(names = {"-overwrite"}, description = "Overwrite existing CSV rather than append")
         public boolean overwrite = false;
 
+    @Parameter(names = {"-noFile"}, description = "Do not save data to CSV")
+        public boolean noFile = false;
+
     @Parameter(names = {"-help","-usage"}, description = "Display command line options")
         public boolean help = false;
 }

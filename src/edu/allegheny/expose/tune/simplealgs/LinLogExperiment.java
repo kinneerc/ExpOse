@@ -11,7 +11,7 @@ public class LinLogExperiment extends BenchMark{
 
     long value;
 
-    public static final int[] algs = {1,2,3,4,5};
+    public static final int[] algs = {1,2,3,4};
 
     public LinLogExperiment(String[] args, int alg){
         super(args);
@@ -34,16 +34,20 @@ public class LinLogExperiment extends BenchMark{
                     correct = cubic;
                     break;
         }
+         initN();
 
     }
+    
+    public String toString(){
+    	return name;
+    }
 
-    public BigOh getCorrectBigOh(){
+    public BigOh getCorrectBigOh(){        System.out.println(value);
         return correct;
     }
 
     protected void initN(){
         value = 1;
-        System.out.println(value);
     }
     protected void doubleN(){
         value *= 2;
@@ -61,15 +65,13 @@ public class LinLogExperiment extends BenchMark{
                     break;
             case 4: testAlgs.linearithmic(value);
                     break;
-            case 5: testAlgs.factorial(value);
-                    break;
-            case 6: testAlgs.cubic(value);
+            case 5: testAlgs.cubic(value);
                     break;
         }
 
         long endTime = System.nanoTime();
 
-        System.out.println("TIME: "+(endTime - startTime)+" N: "+value);
+        //System.out.println("TIME: "+(endTime - startTime)+" N: "+value);
 
         return (double) endTime - startTime;
 

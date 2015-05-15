@@ -76,7 +76,12 @@ public abstract class DoublingExperiment{
         termCode = -1;
         runTime = -1;
 
-        data = new ExperimentResults(params.csv,CSVheader,expParams,!params.overwrite);
+        String csvFileName = null;
+
+        if (!params.noFile)
+            csvFileName = params.csv;
+
+        data = new ExperimentResults(csvFileName,CSVheader,expParams,!params.overwrite);
     }
 
     /**

@@ -39,17 +39,17 @@ public class testAlgs{
         }
     }
     public static void linearithmic(long n){
-        linear(n);
-        log(n);
+    	for (int count = 0; count < n; count++){
+          log(n);
+        }
     }
 
     public static void cubic(long n){
         for (int count = 0; count < n; count++){
             for (int count2 = 0; count2 < n; count2++){
                 for (int count3 = 0; count3 < n; count3++){
-
                     try{
-                Thread.sleep(20);
+                Thread.sleep(2);
             }catch(InterruptedException e){
                 e.printStackTrace();
             }

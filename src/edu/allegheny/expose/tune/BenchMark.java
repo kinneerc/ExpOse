@@ -35,4 +35,7 @@ public boolean verifyCorrectness(){
 }
 
 protected abstract BigOh getCorrectBigOh();
+
+public abstract String toString();
+
 }

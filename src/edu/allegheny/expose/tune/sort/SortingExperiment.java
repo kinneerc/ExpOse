@@ -21,6 +21,7 @@ public class SortingExperiment extends BenchMark{
 
     public SortingExperiment(String[] args, String algName){
         super(args);
+        name = algName;
         switch (algName){
             case "quick": 
                     alg = 1;
@@ -40,10 +41,15 @@ public class SortingExperiment extends BenchMark{
                     break;
             case "bubble": 
                     alg = 5;
-                    correct = quadratic;
+                    correct = quadratic; int success = 0;
                     break;
         }
+        initN();
 
+    }
+    
+    public String toString(){
+    	return name;
     }
 
     public BigOh getCorrectBigOh(){
@@ -85,7 +91,7 @@ public class SortingExperiment extends BenchMark{
 
         long endTime = System.nanoTime();
 
-        System.out.println("Time = "+(endTime-startTime));
+        //System.out.println("Time = "+(endTime-startTime));
 
         return (double) endTime - startTime;
 

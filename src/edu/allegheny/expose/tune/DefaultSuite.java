@@ -22,7 +22,7 @@ public class DefaultSuite extends BenchMarkSuite {
                 return benchmarks.remove(0);
             }
             public boolean hasNext(){
-                return benchmarks.isEmpty();
+                return !benchmarks.isEmpty();
             }
         };
     }

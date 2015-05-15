@@ -15,6 +15,7 @@ public class JosephusExperiment extends BenchMark{
 
     public JosephusExperiment(String[] args){
     super(args);
+    initN();
     }
 
     protected void initN(){
@@ -37,12 +38,16 @@ public class JosephusExperiment extends BenchMark{
 
         double time = (double) endTime - startTime;
 
-        System.out.println("N = "+n+"Time = "+time);
+        //System.out.println("N = "+n+"Time = "+time);
 
         return time;
 
     }
 
+    public String toString(){
+    	return "Josephus";
+    }
+    
 	@Override
 	protected BigOh getCorrectBigOh() {
 		return linearithmic;
