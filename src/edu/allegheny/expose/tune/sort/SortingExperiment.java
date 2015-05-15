@@ -4,7 +4,6 @@ import java.util.*;
 
 import edu.allegheny.expose.*;
 import edu.allegheny.expose.tune.BenchMark;
-import edu.allegheny.expose.tune.sort.*;
 
 public class SortingExperiment extends BenchMark{
 
@@ -41,7 +40,7 @@ public class SortingExperiment extends BenchMark{
                     break;
             case "bubble": 
                     alg = 5;
-                    correct = quadratic; int success = 0;
+                    correct = quadratic;
                     break;
         }
         initN();

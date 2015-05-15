@@ -1,10 +1,8 @@
 package edu.allegheny.expose.tune.josephus;
 
 import edu.allegheny.expose.BigOh;
-import edu.allegheny.expose.DoublingExperiment;
-import edu.allegheny.expose.ReverseEngineer;
 import edu.allegheny.expose.tune.BenchMark;
-import edu.allegheny.expose.tune.josephus.*;
+
 import net.datastructures.*;
 public class JosephusExperiment extends BenchMark{
 
