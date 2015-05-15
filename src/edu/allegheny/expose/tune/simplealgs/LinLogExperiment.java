@@ -42,7 +42,7 @@ public class LinLogExperiment extends BenchMark{
     	return name;
     }
 
-    public BigOh getCorrectBigOh(){        System.out.println(value);
+    public BigOh getCorrectBigOh(){        
         return correct;
     }
 
