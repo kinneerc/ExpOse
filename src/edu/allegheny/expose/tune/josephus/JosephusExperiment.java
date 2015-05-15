@@ -1,28 +1,20 @@
-package edu.allegheny.expose.examples.josephus;
+package edu.allegheny.expose.tune.josephus;
 
 import edu.allegheny.expose.BigOh;
 import edu.allegheny.expose.DoublingExperiment;
 import edu.allegheny.expose.ReverseEngineer;
-import edu.allegheny.expose.examples.josephus.*;
+import edu.allegheny.expose.tune.BenchMark;
+import edu.allegheny.expose.tune.josephus.*;
 import net.datastructures.*;
-public class JosephusExperiment extends DoublingExperiment{
+public class JosephusExperiment extends BenchMark{
 
     protected int alg;
     protected String name;
     private int n;
 
 
-    public static void main(String[] args){
-        JosephusExperiment exp = new JosephusExperiment();
-        System.out.println("Running experiment for: Joshephus.");
-        exp.initN();
-        exp.runExperiment();
-        exp.getData().writeCSV();
-        ReverseEngineer eng = new ReverseEngineer();
-        eng.loadData(exp.getData());
-        BigOh ans = eng.analyzeData();
-        System.out.println(ans);
-
+    public JosephusExperiment(String[] args){
+    super(args);
     }
 
     protected void initN(){
@@ -50,6 +42,11 @@ public class JosephusExperiment extends DoublingExperiment{
         return time;
 
     }
+
+	@Override
+	protected BigOh getCorrectBigOh() {
+		return linearithmic;
+	}
 
 }
 

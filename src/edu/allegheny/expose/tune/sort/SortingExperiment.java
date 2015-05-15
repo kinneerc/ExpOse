@@ -1,13 +1,12 @@
-package edu.allegheny.expose.examples.sort;
+package edu.allegheny.expose.tune.sort;
 
 import java.util.*;
 
-import edu.allegheny.expose.BigOh;
-import edu.allegheny.expose.DoublingExperiment;
-import edu.allegheny.expose.ReverseEngineer;
-import edu.allegheny.expose.examples.sort.*;
+import edu.allegheny.expose.*;
+import edu.allegheny.expose.tune.BenchMark;
+import edu.allegheny.expose.tune.sort.*;
 
-public class SortingExperiment extends DoublingExperiment{
+public class SortingExperiment extends BenchMark{
 
     protected int alg;
     protected String name;
@@ -15,66 +14,40 @@ public class SortingExperiment extends DoublingExperiment{
 
     public static String[] algs = {"quick", "insertion", "merge", "selection", "bubble"};
 
-    public static void main(String[] args){
-        SortingExperiment exp = new SortingExperiment();
-        exp.alg = Integer.parseInt(args[0]);
-        switch (exp.alg){
-            case 1: exp.name = "quick";
-                    break;
-            case 2: exp.name = "insertion";
-                    break;
-            case 3: exp.name = "merge";
-                    break;
-            case 4: exp.name = "selection";
-                    break;
-            case 5: exp.name = "bubble";
-                    break;
-            default: System.out.println("Invalid choice, use: quick, insertion, merge, selection, or bubble");
-                     return;
-        }
+    private static final BigOh quadratic = new BigOh(ComplexityClass.QUADRADIC);
+    private static final BigOh linearithmic = new BigOh(ComplexityClass.LINEARITHMIC);
 
-        exp.initN();
-        System.out.println("Running experiment for: "+exp.name+"sort.");
-        exp.runExperiment();
-        ReverseEngineer eng = new ReverseEngineer();
-        eng.loadData(exp.getData());
-        exp.getData().writeCSV();
-        BigOh ans = eng.analyzeData();
-        System.out.println(exp.name+"sort is "+ans);
+    private BigOh correct;
+
+    public SortingExperiment(String[] args, String algName){
+        super(args);
+        switch (algName){
+            case "quick": 
+                    alg = 1;
+                    correct = linearithmic;
+                    break;
+            case "insertion": 
+                    alg = 2;
+                    correct = quadratic;
+                    break;
+            case "merge": 
+                    alg = 3;
+                    correct = linearithmic;
+                    break;
+            case "selection":
+                    alg = 4;
+                    correct = quadratic;
+                    break;
+            case "bubble": 
+                    alg = 5;
+                    correct = quadratic;
+                    break;
+        }
 
     }
 
-    public static BigOh doubleExp(String name){
-        SortingExperiment exp = new SortingExperiment();
-        exp.name = name;
-
-        switch (name){
-            case "quick": 
-                    exp.alg = 1;
-                    break;
-            case "insertion": 
-                    exp.alg = 2;
-                    break;
-            case "merge": 
-                    exp.alg = 3;
-                    break;
-            case "selection":
-                    exp.alg = 4;
-                    break;
-            case "bubble": 
-                    exp.alg = 5;
-                    break;
-        }
-
-        exp.initN();
-        System.out.println("Running experiment for: "+exp.name+"sort.");
-        exp.runExperiment();
-        ReverseEngineer eng = new ReverseEngineer();
-        eng.loadData(exp.getData());
-        /* exp.getData().writeCSV(); */
-        BigOh ans = eng.analyzeData();
-        return ans;
-
+    public BigOh getCorrectBigOh(){
+        return correct;
     }
 
     protected void initN(){

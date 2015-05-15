@@ -1,4 +1,4 @@
-package edu.allegheny.expose.examples.josephus;
+package edu.allegheny.expose.tune.josephus;
 
 import net.datastructures.*;
 import java.util.Random;

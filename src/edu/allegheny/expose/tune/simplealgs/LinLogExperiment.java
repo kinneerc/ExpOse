@@ -1,43 +1,44 @@
-package edu.allegheny.expose.examples;
+package edu.allegheny.expose.tune.simplealgs;
 
 import edu.allegheny.expose.BigOh;
-import edu.allegheny.expose.DoublingExperiment;
-import edu.allegheny.expose.ReverseEngineer;
+import edu.allegheny.expose.tune.BenchMark;
 
-public class LinLogExperiment extends DoublingExperiment{
+public class LinLogExperiment extends BenchMark{
 
     protected int alg;
     protected String name;
+    private BigOh correct;
 
     long value;
 
-    public static void main(String[] args){
-        LinLogExperiment exp = new LinLogExperiment();
-        exp.alg = Integer.parseInt(args[0]);
-        switch (exp.alg){
-            case 1: exp.name = "linear";
+    public static final int[] algs = {1,2,3,4,5};
+
+    public LinLogExperiment(String[] args, int alg){
+        super(args);
+        this.alg = alg;
+
+         switch (alg){
+            case 1: name = "linear";
+                    correct = linear;
                     break;
-            case 2: exp.name = "log";
+            case 2: name = "log";
+                    correct = logarithmic;
                     break;
-            case 3: exp.name = "constant";
+            case 3: name = "constant";
+                    correct = constant;
                     break;
-            case 4: exp.name = "linearithmic";
+            case 4: name = "linearithmic";
+                    correct = linearithmic;
                      break;
-            case 5: exp.name = "factorial";
-                    break;
-            case 6: exp.name = "cubic";
+            case 5: name = "cubic";
+                    correct = cubic;
                     break;
         }
-        System.out.println("Running experiment for: "+exp.name+".");
-        exp.setTrials(3);
-        exp.initN();
-        exp.runExperiment();
-        exp.getData().writeCSV();
-        ReverseEngineer eng = new ReverseEngineer();
-        eng.loadData(exp.getData());
-        BigOh ans = eng.analyzeData();
-        System.out.println(exp.name+" is "+ans);
 
+    }
+
+    public BigOh getCorrectBigOh(){
+        return correct;
     }
 
     protected void initN(){
@@ -50,7 +51,6 @@ public class LinLogExperiment extends DoublingExperiment{
     protected double timedTest(){
 
         long startTime = System.nanoTime();
-
 
         switch (alg){
             case 1: testAlgs.linear(value);
@@ -76,5 +76,3 @@ public class LinLogExperiment extends DoublingExperiment{
     }
 
 }
-
-

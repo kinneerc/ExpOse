@@ -1,13 +1,15 @@
-package edu.allegheny.expose.examples.sort;
+package edu.allegheny.expose.tune.sort;
 
 // Routines to sort arrays of integers.
 // (c) 1997, 2001 duane a. bailey
-
+/*
+	    int index;	// general index
+	    int max;	// index of largest value
+*/
 import structure.*;
 
-public class InsertionSort
+public class SelectionSort
 {
-    static int compares;
     public static void main(String args[])
     {
 	ReadStream r = new ReadStream();
@@ -19,8 +21,7 @@ public class InsertionSort
 	{
 	    data[i] = r.readInt();
 	}
-	compares = 0;
-	insertionSort(data,n);
+	selectionSort(data,n);
 	for (i = 0; i < n; i++)
 	{
 	    System.out.print(data[i]+" ");
@@ -28,31 +29,23 @@ public class InsertionSort
 	}
 	System.out.println();
     }
-
-    public static void insertionSort(int data[], int n)
+    public static void selectionSort(int data[], int n)
     // pre: 0 <= n <= data.length
     // post: values in data[0..n-1] are in ascending order
     {
-	int numSorted = 1;	// number of values in place
-	int index;		// general index
-	while (numSorted < n)
+	int numUnsorted = n;
+	int index;	// general index
+	int max;	// index of largest value
+	while (numUnsorted > 0)
 	{
-	    // take the first unsorted value
-	    int temp = data[numSorted];
-	    // ...and insert it among the sorted:
-	    for (index = numSorted; index > 0; index--)
+	    // determine maximum value in array
+	    max = 0;
+	    for (index = 1; index < numUnsorted; index++)
 	    {
-		compares++;
-		if (temp < data[index-1])
-		{
-		    data[index] = data[index-1];
-		} else {
-		    break;
-		}
+		if (data[max] < data[index]) max = index;
 	    }
-	    // reinsert value
-	    data[index] = temp;
-	    numSorted++;
+	    swap(data,max,numUnsorted-1);
+	    numUnsorted--;
 	}
     }
     public static void swap(int data[], int i, int j)
@@ -63,6 +56,17 @@ public class InsertionSort
 	temp = data[i];
 	data[i] = data[j];
 	data[j] = temp;
+    }
+	
+
+    public static void swap(Vector data, int i, int j)
+    // pre: 0 <= i,j < data.size()
+    // post: i-th j-th elements of data are exchanged
+    {
+	Object temp;
+	temp = data.get(i);
+	data.set(i,data.get(j));
+	data.set(j,temp);
     }
 }
 /*
@@ -80,3 +84,4 @@ public class InsertionSort
 75 76 76 81 82 82 84 84 85 85 85 86 89 89 90 
 92 92 93 95 95 96 97 97 98 99 
 */
+

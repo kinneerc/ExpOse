@@ -1,4 +1,4 @@
-package edu.allegheny.expose.examples;
+package edu.allegheny.expose.tune.simplealgs;
 
 public class testAlgs{
     public static void main(String[] args){
