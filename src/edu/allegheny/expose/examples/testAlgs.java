@@ -8,7 +8,6 @@ public class testAlgs{
         log(10000);
 
     }
-
     public static int linear(long n){
         int face=1;
         for (int count = 0; count < n; count++){
@@ -59,7 +58,6 @@ public class testAlgs{
             }
         }
     }
-
     public static void factorial(long n) {
         for(long i=0; i<n; i++) {
             factorial(n-1);
