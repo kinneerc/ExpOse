@@ -46,7 +46,7 @@ public class Tuner {
                     pass = "FAIL";
                 }
                 
-                System.out.printf("Alg: %10s Trial: %2d Result: %4s \n",b.toString(),count,pass);
+                System.out.printf("Alg: %14s Trial: %2d Result: %4s \n",b.toString(),count,pass);
             }
         }
         successRate = (double) success /(double) runs;
