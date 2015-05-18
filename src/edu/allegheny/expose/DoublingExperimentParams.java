@@ -8,7 +8,7 @@ public class DoublingExperimentParams{
         public int trials = 10;
 
     @Parameter(names = {"-convergence"}, description = "Experiment convergent if diff < this")
-        public double convergence = .4;
+        public double convergence = 20;
 
     @Parameter(names = {"-o","-out","-csv"}, description = "Name of the csv file to save data to")
         public String csv = "LastExperiment.csv.tmp";

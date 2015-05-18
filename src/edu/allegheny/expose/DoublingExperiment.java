@@ -182,33 +182,25 @@ public abstract class DoublingExperiment{
         if (data.aggregate().size() < minRuns)
             return false;        
 
-        // find ratio of last lookBack runs
-        double[] ratio = new double[lookBack];
-
-        for (int count = 0; count < lookBack; count++){
-            ratio[count] = data.getRatio(count);
-        }
-
-
-        // now calculate sum of change in last lookBack runs
-        double change = 0;
-
-        for (int count = 0; count < lookBack - 1; count++){
-            change += ratio[count] - ratio[count+1];
-        }
-
-        // now find the differance from zero
-        change = Math.abs(change);
+        // calulate percent differance between last run and the lookback run
+        double diff = percentDifferance(data.getRatio(0),data.getRatio(lookBack-1)); 
 
         if(verbose)
-            System.out.println("Convergence Check: Change = "+change+" Ratio = "+data.getRatio(0));
+            System.out.println("Convergence Check: Change = "+diff+" Ratio = "+data.getRatio(0));
 
         // check tolerance
-        if (change <= convergenceTolerance){
+        if (diff <= convergenceTolerance){
             return true;
         }else{
             return false;
         }
+    }
+
+    private double percentDifferance(double d1, double d2){
+        double diff = Math.abs(d1-d2);
+        double avg = (d1 + d2)/2.0;
+
+        return diff / avg * 100;
     }
 
 

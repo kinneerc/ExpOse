@@ -4,7 +4,7 @@ import edu.allegheny.expose.tune.*;
 
 public class Tuner {
 
-    private static final double initialTolerance = 5;
+    private static final double initialTolerance = 100;
     private static final int trials = 2;
     /**
      * Desired success rate for tuning.
@@ -12,7 +12,7 @@ public class Tuner {
      * 1.0 = perfect score, all passing
      * 
      */
-    private static final double toleranceGoal = 1.0;
+    private static final double toleranceGoal = 0.90;
 
     public static void main(String[] args){
         System.out.println(Tuner.tuneTolerance(new DefaultSuite()));

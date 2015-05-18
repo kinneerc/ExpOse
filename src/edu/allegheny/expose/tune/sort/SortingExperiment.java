@@ -11,7 +11,7 @@ public class SortingExperiment extends BenchMark{
     protected String name;
     private int[] n;
 
-    public static String[] algs = {"quick", "insertion", "merge", "selection", "bubble"};
+    public static String[] algs = {"selection", "insertion","bubble", "quick","merge"};
 
     private static final BigOh quadratic = new BigOh(ComplexityClass.QUADRADIC);
     private static final BigOh linearithmic = new BigOh(ComplexityClass.LINEARITHMIC);
