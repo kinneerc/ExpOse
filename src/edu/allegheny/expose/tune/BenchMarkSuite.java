@@ -6,6 +6,9 @@ public abstract class BenchMarkSuite implements Iterable<BenchMark> {
 
     public BenchMarkSuite(String[] args){
         this.args = args;
+        // benchmarks are used for tuning, and should not be tuned themselves
+        // if tuning is on, this will result in an infinite loop
+        setArg("-noTune","");
     }
 
     /**

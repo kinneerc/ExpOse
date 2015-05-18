@@ -17,12 +17,10 @@ public class DefaultSuite extends BenchMarkSuite {
 
     public DefaultSuite(){
         super(new String[] {});
-        benchmarks = new ArrayList<BenchMark>();
     }
 
     public DefaultSuite(String[] args){
         super(args);
-        benchmarks = new ArrayList<BenchMark>();
     }
 
     public Iterator<BenchMark> iterator(){
@@ -43,6 +41,7 @@ public class DefaultSuite extends BenchMarkSuite {
 
     private void initializeBenchmarks(){
         size = 0;
+        benchmarks = new ArrayList<BenchMark>();
         // get sorting algorithms
         for (String sortAlg : SortingExperiment.algs){
             benchmarks.add(new SortingExperiment(getArgs(),sortAlg));

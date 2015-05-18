@@ -18,6 +18,12 @@ public class SortingExperiment extends BenchMark{
 
     private BigOh correct;
 
+    public static void main(String[] args){
+        SortingExperiment se = new SortingExperiment(new String[] {"-noFile"}, args[0]);
+        se.runExperiment();
+        se.printBigOh();
+    }
+
     public SortingExperiment(String[] args, String algName){
         super(args);
         name = algName;
@@ -43,8 +49,6 @@ public class SortingExperiment extends BenchMark{
                     correct = quadratic;
                     break;
         }
-        initN();
-
     }
     
     public String toString(){
@@ -62,6 +66,9 @@ public class SortingExperiment extends BenchMark{
         n = createInput(n.length*2);
     }
     protected double timedTest(){
+
+        if (n==null)
+            initN();
 
         // shuffle list first
         n = createInput(n.length);

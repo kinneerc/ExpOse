@@ -13,11 +13,14 @@ public class DoublingExperimentParams{
     @Parameter(names = {"-o","-out","-csv"}, description = "Name of the csv file to save data to")
         public String csv = "LastExperiment.csv.tmp";
 
-    @Parameter(names = {"-noTune"}, description = "Disable trying to break out of O(1)")
+    @Parameter(names = {"-noTune"}, description = "Disable automatic tuning")
         public boolean tuning = false;
 
-    @Parameter(names = {"-tuningTries"}, description = "Number of times to double n to try to break out of O(1)")
-        public int tuningTries = 20;
+    @Parameter(names = {"-noMinimum"},description = "Disable requiring a minimum number of O(1) runs")
+        public boolean noMinimum = false;
+
+    @Parameter(names = {"-minimum"}, description = "Number of times to double n to try to break out of O(1)")
+        public int minimum = 20;
 
     @Parameter(names = {"-minDoubles"}, description = "Minimum number of doubles to try")
         public int minRuns = 5;
