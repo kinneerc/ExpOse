@@ -11,11 +11,13 @@ public abstract class BenchMarkSuite implements Iterable<BenchMark> {
     /**
      * Returns arguments for initializing benchmarks
      */
-    protected String[] getArgs(){
+    public String[] getArgs(){
         return args;
     }
 
-    protected void setArg(String arg,String value){
+    abstract public int size();
+
+    public void setArg(String arg,String value){
 
         String[] nargs = new String[args.length+2];
 
