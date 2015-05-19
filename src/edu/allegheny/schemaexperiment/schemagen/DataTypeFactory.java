@@ -1,6 +1,5 @@
 package edu.allegheny.schemaexperiment.schemagen;
 
-import org.schemaanalyst.sqlrepresentation.*;
 import org.schemaanalyst.sqlrepresentation.datatype.*;
 
 public class DataTypeFactory {
@@ -11,8 +10,9 @@ public class DataTypeFactory {
         return (new BooleanDataType());
     }
     
+    //TODO fix the length! allow choice or something...
     public static CharDataType getCharDataType(){
-        return (new CharDataType());
+        return (new CharDataType(10));
     }
 
 }

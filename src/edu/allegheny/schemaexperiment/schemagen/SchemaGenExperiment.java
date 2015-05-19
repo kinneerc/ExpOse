@@ -85,13 +85,14 @@ public class SchemaGenExperiment extends DoublingExperiment {
     }
 
     public void doubleN(){
+        schemaSize[doubler] = (schemaSize[doubler] == 0) ? 1 : schemaSize[doubler] * 2;
     }
 
     // int tables, int columns, int notnulls, int primaryKeys, int foriegnKeys, 
     // int uniques,int checks
 
     public void initN(int maxSize){
-        schemaSize = new int[] {1,1,1,1,1,1,1};
+        schemaSize = new int[] {1,1,0,0,0,0,0};
         switch(doubler){
             case 0: case 2: case 3: schemaSize[1] = maxSize; break;
             case 4: case 5: 
@@ -117,8 +118,19 @@ public class SchemaGenExperiment extends DoublingExperiment {
 
         // instantiate schema if nessissary
         if(n==null){
+            if(maxSize==0)
+                maxSize = 10;
             initN(maxSize);
+            for (int i : schemaSize)
+                System.out.print(i+" ");
         }
+        
+        // instantiate the params if nessissary
+        if (params==null)
+        	params = new SchemaExpParams();
+
+        // generate the schema
+        n = Generator.randomSchema(schemaSize).getSchema();
 
         // instantiate objects for parameters
         CoverageCriterion criterionObject = CoverageCriterionFactory.instantiateSchemaCriterion(params.criterion,n,new MySQLDBMS());

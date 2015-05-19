@@ -33,11 +33,17 @@ public class Generator{
 
     }
 
+    public static SchemaSpec randomSchema(int[] sF){
+        return randomSchema(sF[0],sF[1],sF[2],sF[3],sF[4],sF[5],sF[6]);
+    }
+
     // FKEYS: will make compound keys according to a uniform distribution (just like PKeys) 
     public static SchemaSpec randomSchema(int tables, int columns, int notnulls, int primaryKeys, int foriegnKeys, int uniques,int checks){
 
-    	if (columns < tables)
+    	if (columns < tables){
+    	    System.out.println(columns+" > "+tables);
     		throw new SchemaGenException("More tables than columns, tables cannot be empty.");
+        }
     	
         Random rand = new Random();
         ForiegnKeyGen fkg = new ForiegnKeyGen();

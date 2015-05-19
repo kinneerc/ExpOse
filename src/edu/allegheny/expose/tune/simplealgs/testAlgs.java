@@ -1,12 +1,11 @@
 package edu.allegheny.expose.tune.simplealgs;
 
 public class testAlgs{
+	
     public static void main(String[] args){
-
         System.out.println("Testing.");
         linear(10000);
         log(10000);
-
     }
     public static int linear(long n){
         int face=1;
