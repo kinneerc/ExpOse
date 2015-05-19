@@ -88,8 +88,12 @@ public class Generator{
        Iterator<PotentialForeignKey> pfks = fkg.iterator();
        
        for (int count = 0; count < foriegnKeys; count++){
-           if (!pfks.hasNext())
+
+           
+           if (!pfks.hasNext()){
+            System.out.println("Choked on fkey: "+count);
            throw new SchemaGenException("Cannot provide requested FKeys");
+           }
 
            PotentialForeignKey pfk = pfks.next();
 
