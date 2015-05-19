@@ -45,8 +45,7 @@ public class ExperimentResults{
         data = new ArrayList<Double[]>(); 
         this.header = header;
 
-        if (CSVDir == null)
-            CSVDir = "LastExperiment.csv";
+        if (CSVDir != null){
         // initialize writer to given dir
         try {
             writer = new CSVWriter(new FileWriter(CSVDir,append));
@@ -56,10 +55,11 @@ public class ExperimentResults{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        }
     }
 
     public ExperimentResults(){
-        this("LastExperiment.csv", new String[] {"Doubles","Time"},false);
+        this(null, new String[] {"Doubles","Time"},false);
     }
 
     public void writeMetafile(int termcode, long runtime, String schema, String criterion, String generator, String doubler){
@@ -316,6 +316,7 @@ public class ExperimentResults{
             stringOut[count+input.length] = expParams[count];
         }
 
+         if(writer != null){
         writer.writeNext(stringOut);
 
         try {
@@ -324,6 +325,7 @@ public class ExperimentResults{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+         }
     }
 
 }

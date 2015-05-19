@@ -1,12 +1,13 @@
-package edu.allegheny.expose.examples.sort;
+package edu.allegheny.expose.tune.sort;
 
 // Routines to sort arrays of integers.
 // (c) 1997, 2001 duane a. bailey
 
 import structure.*;
 
-public class BubbleSort
+public class InsertionSort
 {
+    static int compares;
     public static void main(String args[])
     {
 	ReadStream r = new ReadStream();
@@ -18,7 +19,8 @@ public class BubbleSort
 	{
 	    data[i] = r.readInt();
 	}
-	bubbleSort(data,n);
+	compares = 0;
+	insertionSort(data,n);
 	for (i = 0; i < n; i++)
 	{
 	    System.out.print(data[i]+" ");
@@ -27,21 +29,29 @@ public class BubbleSort
 	System.out.println();
     }
 
-    public static void bubbleSort(int data[], int n)
+    public static void insertionSort(int data[], int n)
     // pre: 0 <= n <= data.length
-    // post: values in data[0..n-1] in ascending order
+    // post: values in data[0..n-1] are in ascending order
     {
-	int numSorted = 0;	// number of values in order
+	int numSorted = 1;	// number of values in place
 	int index;		// general index
 	while (numSorted < n)
 	{
-	    // bubble a large element to higher array index
-	    for (index = 1; index < n-numSorted; index++)
+	    // take the first unsorted value
+	    int temp = data[numSorted];
+	    // ...and insert it among the sorted:
+	    for (index = numSorted; index > 0; index--)
 	    {
-		if (data[index-1] > data[index])
-		    swap(data,index-1,index);
+		compares++;
+		if (temp < data[index-1])
+		{
+		    data[index] = data[index-1];
+		} else {
+		    break;
+		}
 	    }
-	    // at least one more value in place
+	    // reinsert value
+	    data[index] = temp;
 	    numSorted++;
 	}
     }
@@ -54,19 +64,7 @@ public class BubbleSort
 	data[i] = data[j];
 	data[j] = temp;
     }
-	
-
-    public static void swap(Vector data, int i, int j)
-    // pre: 0 <= i,j < data.size()
-    // post: i-th j-th elements of data are exchanged
-    {
-	Object temp;
-	temp = data.get(i);
-	data.set(i,data.get(j));
-	data.set(j,temp);
-    }
-
-}	
+}
 /*
 100
 73 92 40 38 51 17 8 31 56 84 21 34 29 16 61 31 7 63 70 32 
@@ -82,4 +80,3 @@ public class BubbleSort
 75 76 76 81 82 82 84 84 85 85 85 86 89 89 90 
 92 92 93 95 95 96 97 97 98 99 
 */
-

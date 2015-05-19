@@ -1,6 +1,10 @@
 package edu.allegheny.expose;
 
+import java.util.ArrayList;
+
 import com.beust.jcommander.JCommander;
+
+import edu.allegheny.expose.tune.DefaultSuite;
 
 /**
  * This abstract class provides the needed methods
@@ -23,10 +27,12 @@ public abstract class DoublingExperiment{
     private int minRuns;
     /** Number of times to repeat each test */
     private int trials;
+    /** Allows for disabiling automatic paramter tuning */
+    private boolean noTune;
     /** Should we attempt to find a good default minRuns */
-    private boolean noTuning;
+    private boolean noMinimum;
     /** Number of times to double N before giving up in a tuning experiment */
-    private int tuningTries;
+    private int minimum;
     /** Number of ratios to consider when checking for convergence */
     private int lookBack;
     /** display debug output */
@@ -36,6 +42,11 @@ public abstract class DoublingExperiment{
 
     /** Parameters object, default settings handled in this class */
     protected DoublingExperimentParams params; 
+
+    // for automatic tuning
+    // paramters for tuning the number of trials
+    private static final double trialsGoal = 0.10; 
+    private static final int trialsGiveUp = 5;
 
     /**
      * Constructor initializes settings
@@ -55,8 +66,18 @@ public abstract class DoublingExperiment{
             System.exit(0);
         }
 
-        convergenceTolerance = params.convergence;
-        tuningTries = params.tuningTries;
+        noTune = params.tuning;
+
+        // if tuning is enabled, then set tolerance and trials by automatic tuning
+        if(!noTune){
+            trials = tuneTrials();
+            convergenceTolerance = Tuner.tuneTolerance(new DefaultSuite());
+        }else{
+            trials = params.trials;
+            convergenceTolerance = params.convergence;
+        }
+
+        minimum = params.minimum;
         lookBack = params.lookBack;
 
         // getting a ratio requires at least 2 runs, so x ratios needs x + 1 runs
@@ -68,15 +89,19 @@ public abstract class DoublingExperiment{
             minRuns = lookBack + 1;
         }
 
-        trials = params.trials;
-        noTuning = params.tuning;
+        noMinimum = params.noMinimum;
         verbose = params.verbose;
         giveUpTime = params.giveUpTime;
 
         termCode = -1;
         runTime = -1;
 
-        data = new ExperimentResults(params.csv,CSVheader,expParams,!params.overwrite);
+        String csvFileName = null;
+
+        if (!params.noFile)
+            csvFileName = params.csv;
+
+        data = new ExperimentResults(csvFileName,CSVheader,expParams,!params.overwrite);
     }
 
     /**
@@ -97,6 +122,57 @@ public abstract class DoublingExperiment{
 
 
     /**
+     * Automatically decide upon a good setting for a doubling experiment's number of trials
+     * that is, the number of runs that we take a median of.
+     * 
+     * For a number of trials, we run the timedTest that many times, and record
+     * the median for BATCH_COUNT number of times.  We then calculate the variance of
+     * that, and increase the number of trials until the variance is acceptable,
+     * or until the variance stops improving for trialsGiveUp number of batches
+     * */
+    private int tuneTrials(){
+        double cv = Double.MAX_VALUE;
+        int trials = 4;
+
+        int run = -1;
+
+        double min = Double.MAX_VALUE;
+
+        int lastUpdate = 0;
+
+        while (cv > trialsGoal){
+            run++;
+            trials++;
+            ArrayList<Double> medianTime = new ArrayList<Double>();
+            for (int batch = 0; batch < 10; batch++){
+                ArrayList<Double> runtimeRecords = new ArrayList<Double>();
+                for (int count = 0; count < trials; count++){
+                    runtimeRecords.add(timedTest());
+                }
+                medianTime.add(ExperimentResults.centralTendency(runtimeRecords));
+            }
+            cv = coefficientOfVariation(medianTime);
+            System.out.printf("Run: %2d Trials: %2d Cv: %4.4f\n",run,trials,cv);
+
+            if (cv < min){
+                min = cv;
+                lastUpdate = 0;
+            }else{
+                lastUpdate++;
+                if (lastUpdate > trialsGiveUp){
+                    System.out.println("Cv not improved for "+trialsGiveUp+" runs.");
+                    break;
+                }
+
+            }
+
+        }
+
+        return trials;
+    }
+
+
+    /**
      * Checks to see if the ratio of 2N/N has converged
      * @return true if converged, false if not
      */
@@ -106,33 +182,25 @@ public abstract class DoublingExperiment{
         if (data.aggregate().size() < minRuns)
             return false;        
 
-        // find ratio of last lookBack runs
-        double[] ratio = new double[lookBack];
-
-        for (int count = 0; count < lookBack; count++){
-            ratio[count] = data.getRatio(count);
-        }
-
-
-        // now calculate sum of change in last lookBack runs
-        double change = 0;
-
-        for (int count = 0; count < lookBack - 1; count++){
-            change += ratio[count] - ratio[count+1];
-        }
-
-        // now find the differance from zero
-        change = Math.abs(change);
+        // calulate percent differance between last run and the lookback run
+        double diff = percentDifferance(data.getRatio(0),data.getRatio(lookBack-1)); 
 
         if(verbose)
-            System.out.println("Convergence Check: Change = "+change+" Ratio = "+data.getRatio(0));
+            System.out.println("Convergence Check: Change = "+diff+" Ratio = "+data.getRatio(0));
 
         // check tolerance
-        if (change <= convergenceTolerance){
+        if (diff <= convergenceTolerance){
             return true;
         }else{
             return false;
         }
+    }
+
+    private double percentDifferance(double d1, double d2){
+        double diff = Math.abs(d1-d2);
+        double avg = (d1 + d2)/2.0;
+
+        return diff / avg * 100;
     }
 
 
@@ -156,7 +224,7 @@ public abstract class DoublingExperiment{
         try{
             startTime = System.currentTimeMillis();
             // tune minRuns if desired
-            if (!noTuning){
+            if (!noMinimum){
                 tuneInitN();
             }else{
                 // data is initialized in tuneInitN
@@ -244,7 +312,7 @@ public abstract class DoublingExperiment{
 
         if (verbose)
             System.out.println("Finding min doubles...");
-        while(!checkInitN() && doubles < tuningTries){
+        while(!checkInitN() && doubles < minimum){
             // repeat each test multiple times
             for (int count = 0; count < trials; count++){
                 Double[] result = {(double) doubles, timedTest()};
@@ -289,6 +357,18 @@ public abstract class DoublingExperiment{
 
     }
 
+    private static double coefficientOfVariation(ArrayList<Double> times){
+        double sum = 0;
+        double dSquaredTotal = 0;
+        for (double t : times){
+            sum += t;
+        }
+        double mean = (double) sum / (double) times.size();
+        for (double t : times){
+            dSquaredTotal += Math.pow(Math.abs(mean-t),2);
+        }
+        return Math.sqrt(dSquaredTotal)/mean;
+    }
 
     /**
      * Return this objects data

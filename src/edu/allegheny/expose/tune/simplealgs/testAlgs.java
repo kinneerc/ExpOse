@@ -1,4 +1,4 @@
-package edu.allegheny.expose.examples;
+package edu.allegheny.expose.tune.simplealgs;
 
 public class testAlgs{
     public static void main(String[] args){
@@ -8,7 +8,6 @@ public class testAlgs{
         log(10000);
 
     }
-
     public static int linear(long n){
         int face=1;
         for (int count = 0; count < n; count++){
@@ -40,17 +39,17 @@ public class testAlgs{
         }
     }
     public static void linearithmic(long n){
-        linear(n);
-        log(n);
+    	for (int count = 0; count < n; count++){
+          log(n);
+        }
     }
 
     public static void cubic(long n){
         for (int count = 0; count < n; count++){
             for (int count2 = 0; count2 < n; count2++){
                 for (int count3 = 0; count3 < n; count3++){
-
                     try{
-                Thread.sleep(20);
+                Thread.sleep(2);
             }catch(InterruptedException e){
                 e.printStackTrace();
             }
@@ -59,7 +58,6 @@ public class testAlgs{
             }
         }
     }
-
     public static void factorial(long n) {
         for(long i=0; i<n; i++) {
             factorial(n-1);

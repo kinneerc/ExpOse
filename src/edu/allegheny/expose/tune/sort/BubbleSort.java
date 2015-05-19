@@ -1,14 +1,11 @@
-package edu.allegheny.expose.examples.sort;
+package edu.allegheny.expose.tune.sort;
 
 // Routines to sort arrays of integers.
 // (c) 1997, 2001 duane a. bailey
-/*
-	    int index;	// general index
-	    int max;	// index of largest value
-*/
+
 import structure.*;
 
-public class SelectionSort
+public class BubbleSort
 {
     public static void main(String args[])
     {
@@ -21,7 +18,7 @@ public class SelectionSort
 	{
 	    data[i] = r.readInt();
 	}
-	selectionSort(data,n);
+	bubbleSort(data,n);
 	for (i = 0; i < n; i++)
 	{
 	    System.out.print(data[i]+" ");
@@ -29,23 +26,23 @@ public class SelectionSort
 	}
 	System.out.println();
     }
-    public static void selectionSort(int data[], int n)
+
+    public static void bubbleSort(int data[], int n)
     // pre: 0 <= n <= data.length
-    // post: values in data[0..n-1] are in ascending order
+    // post: values in data[0..n-1] in ascending order
     {
-	int numUnsorted = n;
-	int index;	// general index
-	int max;	// index of largest value
-	while (numUnsorted > 0)
+	int numSorted = 0;	// number of values in order
+	int index;		// general index
+	while (numSorted < n)
 	{
-	    // determine maximum value in array
-	    max = 0;
-	    for (index = 1; index < numUnsorted; index++)
+	    // bubble a large element to higher array index
+	    for (index = 1; index < n-numSorted; index++)
 	    {
-		if (data[max] < data[index]) max = index;
+		if (data[index-1] > data[index])
+		    swap(data,index-1,index);
 	    }
-	    swap(data,max,numUnsorted-1);
-	    numUnsorted--;
+	    // at least one more value in place
+	    numSorted++;
 	}
     }
     public static void swap(int data[], int i, int j)
@@ -68,7 +65,8 @@ public class SelectionSort
 	data.set(i,data.get(j));
 	data.set(j,temp);
     }
-}
+
+}	
 /*
 100
 73 92 40 38 51 17 8 31 56 84 21 34 29 16 61 31 7 63 70 32 

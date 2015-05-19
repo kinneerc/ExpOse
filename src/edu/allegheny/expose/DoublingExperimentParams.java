@@ -8,16 +8,19 @@ public class DoublingExperimentParams{
         public int trials = 10;
 
     @Parameter(names = {"-convergence"}, description = "Experiment convergent if diff < this")
-        public double convergence = .4;
+        public double convergence = 20;
 
     @Parameter(names = {"-o","-out","-csv"}, description = "Name of the csv file to save data to")
         public String csv = "LastExperiment.csv.tmp";
 
-    @Parameter(names = {"-noTune"}, description = "Disable trying to break out of O(1)")
+    @Parameter(names = {"-noTune"}, description = "Disable automatic tuning")
         public boolean tuning = false;
 
-    @Parameter(names = {"-tuningTries"}, description = "Number of times to double n to try to break out of O(1)")
-        public int tuningTries = 20;
+    @Parameter(names = {"-noMinimum"},description = "Disable requiring a minimum number of O(1) runs")
+        public boolean noMinimum = false;
+
+    @Parameter(names = {"-minimum"}, description = "Number of times to double n to try to break out of O(1)")
+        public int minimum = 20;
 
     @Parameter(names = {"-minDoubles"}, description = "Minimum number of doubles to try")
         public int minRuns = 5;
@@ -33,6 +36,9 @@ public class DoublingExperimentParams{
 
     @Parameter(names = {"-overwrite"}, description = "Overwrite existing CSV rather than append")
         public boolean overwrite = false;
+
+    @Parameter(names = {"-noFile"}, description = "Do not save data to CSV")
+        public boolean noFile = false;
 
     @Parameter(names = {"-help","-usage"}, description = "Display command line options")
         public boolean help = false;
