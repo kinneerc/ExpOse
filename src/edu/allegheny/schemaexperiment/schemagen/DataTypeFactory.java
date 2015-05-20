@@ -24,7 +24,7 @@ public class DataTypeFactory {
 
     // TODO use precision and scale (currently just precision)
     public static DecimalDataType getDecimalDataType(int size){
-        return new DecimalDataType(size); 
+        return new DecimalDataType(size,size); 
     }
 
     public static DoubleDataType getDoubleDataType(){
@@ -41,7 +41,7 @@ public class DataTypeFactory {
 
     // TODO use precision and scale (currently just precision)
     public static NumericDataType getNumericDataType(int size){
-        return new NumericDataType(size);
+        return new NumericDataType(size,size);
     }
 
     public static RealDataType getRealDataType(){
