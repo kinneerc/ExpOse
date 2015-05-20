@@ -45,8 +45,12 @@ public abstract class DoublingExperiment{
 
     // for automatic tuning
     // paramters for tuning the number of trials
-    private static final double trialsGoal = 0.10; 
+    private static final double trialsGoal = 0.50; 
     private static final int trialsGiveUp = 5;
+    // number of times to record the median of timed test
+    // for the purpose of choosing a good value for trials
+    private static final int batch_size = 10;
+    private static final int initialTrials = 2;
 
     /**
      * Constructor initializes settings
@@ -126,13 +130,13 @@ public abstract class DoublingExperiment{
      * that is, the number of runs that we take a median of.
      * 
      * For a number of trials, we run the timedTest that many times, and record
-     * the median for BATCH_COUNT number of times.  We then calculate the variance of
+     * the median for batch_size number of times.  We then calculate the variance of
      * that, and increase the number of trials until the variance is acceptable,
      * or until the variance stops improving for trialsGiveUp number of batches
      * */
     private int tuneTrials(){
         double cv = Double.MAX_VALUE;
-        int trials = 4;
+        int trials = initialTrials;
 
         int run = -1;
 
@@ -144,7 +148,7 @@ public abstract class DoublingExperiment{
             run++;
             trials++;
             ArrayList<Double> medianTime = new ArrayList<Double>();
-            for (int batch = 0; batch < 10; batch++){
+            for (int batch = 0; batch < batch_size; batch++){
                 ArrayList<Double> runtimeRecords = new ArrayList<Double>();
                 for (int count = 0; count < trials; count++){
                     runtimeRecords.add(timedTest());

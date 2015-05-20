@@ -1,16 +1,19 @@
 package edu.allegheny.schemaexperiment.schemagen;
 
 import org.schemaanalyst.sqlrepresentation.*;
+
 import java.util.*;
 
 import org.schemaanalyst.sqlwriter.SQLWriter;
 
 public class Generator{
 
+    private static final int MAX_DATATYPE_SIZE = 1000;
+
     public static void main(String[] args){
 
-        if(args.length != 6){
-            System.out.println("Usage - 6 args: int tables, int columns, int notnulls, int primaryKeys, int foriegnKeys, int uniques");
+        if(args.length != 8){
+            System.out.println("Usage - 8 args: int tables, int columns, int notnulls, int primaryKeys, int foriegnKeys, int uniques, int dataTypeSize, int compoundKeySize");
         }else{
 
         int[] iargs = new int[args.length];
@@ -18,7 +21,7 @@ public class Generator{
             iargs[count] = Integer.parseInt(args[count]);
         }
 
-        SchemaSpec sp = randomSchema(iargs[0],iargs[1],iargs[2],iargs[3],iargs[4],iargs[5],0);
+        SchemaSpec sp = randomSchema(iargs[0],iargs[1],iargs[2],iargs[3],iargs[4],iargs[5],0,iargs[6],iargs[7]);
 
         Schema s = sp.getSchema();
         
@@ -34,17 +37,36 @@ public class Generator{
     }
 
     public static SchemaSpec randomSchema(int[] sF){
-        return randomSchema(sF[0],sF[1],sF[2],sF[3],sF[4],sF[5],sF[6]);
+        return randomSchema(sF[0],sF[1],sF[2],sF[3],sF[4],sF[5],sF[6],sF[7],sF[8]);
     }
 
-    // FKEYS: will make compound keys according to a uniform distribution (just like PKeys) 
-    public static SchemaSpec randomSchema(int tables, int columns, int notnulls, int primaryKeys, int foriegnKeys, int uniques,int checks){
+    private static void validateSchema(int tables, int columns, int notnulls, int primaryKeys, int foriegnKeys, int uniques,int checks){
+            if (columns < tables){
+                System.out.println(columns+" > "+tables);
+                throw new SchemaGenException("More tables than columns, tables cannot be empty.");
+            }
+            if (notnulls > columns){
+                System.out.println(notnulls+" > "+columns);
+                throw new SchemaGenException("More NOT NULLs than columns.");
+            }
+            if (primaryKeys > tables){
+                System.out.println(primaryKeys+" > "+columns);
+                throw new SchemaGenException("More PRIMARY KEYs than tables.");
+            }
 
-    	if (columns < tables){
-    	    System.out.println(columns+" > "+tables);
-    		throw new SchemaGenException("More tables than columns, tables cannot be empty.");
-        }
-    	
+            //TODO validation for foriegnKeys, uniques, and checks
+
+
+
+    }
+
+    // compound key size, random if < 1;
+    // NOTICE: primaryKeys now means the actual number of primary keys 
+    // must be <= num of tables
+    public static SchemaSpec randomSchema(int tables, int columns, int notnulls, int primaryKeys, int foriegnKeys, int uniques,int checks,int dataTypeSize, int compoundKeySize){
+
+        validateSchema(tables,columns,notnulls,primaryKeys,foriegnKeys,uniques,checks);
+        
         Random rand = new Random();
         ForiegnKeyGen fkg = new ForiegnKeyGen();
 
@@ -56,42 +78,58 @@ public class Generator{
         int curTable = 0;
 
         // randomly assign datatypes to columns
+        // TODO take into account datatypesize
         int[] colDataType = new int[columns];
+
+        // simply set all datatypesizes to the desired size
+        int[] dataTypeSizeTable = new int[columns];
+
         for (int count = 0; count<columns; count++){
             if (count>colSplitPoints[curTable]-1)
                 curTable++;
             
             colDataType[count] = rand.nextInt(DataTypeFactory.numSupportedTypes);
 
+            dataTypeSizeTable[count] = (dataTypeSize > 0) ? dataTypeSize : rand.nextInt(MAX_DATATYPE_SIZE);
+            
             // build tables to support making FKeys
             fkg.put(curTable,colDataType[count]);
         }
 
-        // NOTICE::funny interpretation, primarykeys = the number of columns in a primary key
-        // so then pick which columns are in a primary key
+        // pick primary keys
         boolean[] pkeys = new boolean[columns];
-        for (int count = 0; count < primaryKeys; count++){
-            int randCol;
+
+       // finally, the uniques
+       // TODO use a list of tables instead of random choosing
+       // TODO have the generator keep track of table eligibility for compound keys
+        for(int count = 0; count < primaryKeys; count++){
+            PotentialUnique pu;
+            int tries = 0;
             do{
-                randCol = rand.nextInt(columns);
-            }while(pkeys[randCol]==true);
-                pkeys[randCol] = true;
+                if (tries++ > 1.5*tables)
+                    throw new SchemaGenException("Could not provide requested PRIMARY KEYs.");
+                pu = fkg.getPotUnique(rand.nextInt(tables));
+            }while(pu.getMaxSize()==0||compoundKeySize>0&&pu.getMaxSize()<compoundKeySize);
+            int size = (compoundKeySize>0) ? compoundKeySize : rand.nextInt(pu.getMaxSize())+1;
+            for (int c : pu.getUniqueBySize(size).columns)
+                pkeys[c] = true;
         }
 
         // now pick which columns are not null
+        // NOTICE notNulls cannot overlap with a primary key
         boolean[] notNulls = new boolean[columns];
         for (int count = 0; count < notnulls; count++){
             int randCol;
             do{
                 randCol = rand.nextInt(columns);
-            }while(notNulls[randCol]==true);
+            }while(notNulls[randCol]==true||pkeys[randCol]==true);
                 notNulls[randCol] = true;
         }
         // FKEYS!
 
-        ArrayList<ForiegnKeySpec> fkeys = new ArrayList<ForiegnKeySpec>();
+       ArrayList<ForiegnKeySpec> fkeys = new ArrayList<ForiegnKeySpec>();
 
-       Iterator<PotentialForeignKey> pfks = fkg.iterator();
+       Iterator<PotentialForeignKey> pfks = fkg.potentialForeignKeys();
        
        for (int count = 0; count < foriegnKeys; count++){
 
@@ -118,6 +156,7 @@ public class Generator{
        ArrayList<UniqueSpec> uqs = new ArrayList<UniqueSpec>();
     
        // finally, the uniques
+       // TODO have the generator keep track of table eligibility for compound keys
         for(int count = 0; count < uniques; count++){
             PotentialUnique pu;
             int tries = 0;
@@ -131,7 +170,7 @@ public class Generator{
 
         // TODO  checks
 
-        return new SchemaSpec(tables,colSplitPoints,colDataType,pkeys,notNulls,fkeys,uqs);
+        return new SchemaSpec(tables,colSplitPoints,colDataType,pkeys,notNulls,fkeys,uqs,dataTypeSizeTable);
         
     }
 

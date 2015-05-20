@@ -2,6 +2,8 @@ package edu.allegheny.schemaexperiment.schemagen;
 
 import java.util.*;
 
+// TODO refactor to ConstraintGen or something
+
 /**
  * This class will help generate foriegn keys by keeping track of
  * what foreign keys are possible / already taken
@@ -9,7 +11,7 @@ import java.util.*;
  * note, we will only allow a column to be involved in a single fkey
  * going from tab 1 - tab 2
  */
-public class ForiegnKeyGen implements Iterable<PotentialForeignKey> {
+public class ForiegnKeyGen {
 
     int columnCount;
 
@@ -139,14 +141,24 @@ public class ForiegnKeyGen implements Iterable<PotentialForeignKey> {
         public int name;
         // store all of the tables that this column points to as an fkey 
         public HashSet<Integer> tabDests;
+        public boolean compoundConstraintEligible;
 
         public Column(int table){
             tabDests = new HashSet<Integer>();
             this.table = table;
+            compoundConstraintEligible = true;
+        }
+
+        public boolean availible(){
+            return compoundConstraintEligible;
         }
 
         public boolean availible(int dest){
-            return !tabDests.contains(dest);
+             return !tabDests.contains(dest);
+        }
+
+        public void inCompoundConstraint(){
+            compoundConstraintEligible = false;
         }
 
         public void inKey(Column dest){
@@ -155,8 +167,7 @@ public class ForiegnKeyGen implements Iterable<PotentialForeignKey> {
 
     }
 
-	@Override
-	public Iterator<PotentialForeignKey> iterator() {
+	public Iterator<PotentialForeignKey> potentialForeignKeys() {
 		
 	    class PotentialForeignKeys implements Iterator<PotentialForeignKey>{
 	    	

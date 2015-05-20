@@ -20,7 +20,7 @@ public class testAlgs{
     }
     public static int log(long n){
         int face=1;
-        for (int count = 1; count < n; count*=3){
+        for (int count = 1; count < n; count*=2){
             face = 0;
             try{
                 Thread.sleep(20);
@@ -39,7 +39,12 @@ public class testAlgs{
     }
     public static void linearithmic(long n){
     	for (int count = 0; count < n; count++){
-          log(n);
+    		for (int count2 = 1;count2 < n; count2*=2)
+				try {
+					Thread.sleep(20);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
         }
     }
 

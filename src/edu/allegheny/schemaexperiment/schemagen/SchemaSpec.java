@@ -2,6 +2,7 @@ package edu.allegheny.schemaexperiment.schemagen;
 
 import org.schemaanalyst.sqlrepresentation.*;
 import org.schemaanalyst.sqlrepresentation.datatype.*;
+
 import java.util.*;
 import java.lang.reflect.*;
 
@@ -9,6 +10,7 @@ public class SchemaSpec{
     private int tables;
     private int[] columns;
     private int[] datatypes;
+    private int[] dataTypeSizeTable;
     private boolean[] primaryKey;
     private boolean[] notNull;
 
@@ -16,7 +18,7 @@ public class SchemaSpec{
 
     private List<UniqueSpec> unique;
 
-    public SchemaSpec(int tables,int[] colSplitPoints,int[] datatypes, boolean[] primaryKey, boolean[] notNull, List<ForiegnKeySpec> fkeys, List<UniqueSpec> unique){
+    public SchemaSpec(int tables,int[] colSplitPoints,int[] datatypes, boolean[] primaryKey, boolean[] notNull, List<ForiegnKeySpec> fkeys, List<UniqueSpec> unique, int[] dataTypeSizeTable){
         this.tables = tables;
         this.columns = colSplitPoints;
         this.datatypes = datatypes;
@@ -24,6 +26,7 @@ public class SchemaSpec{
         this.notNull = notNull;
         this.foriegnKey = fkeys;
         this.unique = unique;
+        this.dataTypeSizeTable = dataTypeSizeTable;
     }
 
     // how to handle check constraints?
@@ -53,7 +56,7 @@ public class SchemaSpec{
             // first, create some lists for constraints to which columns may belong
             ArrayList<Column> pkey = new ArrayList<Column>();
             for (int c = 0; c < columnsPtable[t]; c++){
-                Column currentColumn = curTab.createColumn("Column "+curCol,dataType(datatypes[curCol]));
+                Column currentColumn = curTab.createColumn("Column "+curCol,dataType(datatypes[curCol],dataTypeSizeTable[curCol]));
                 tabLookup.put(currentColumn,curTab);
                 allColumns.add(currentColumn);
                 // check if this column belongs to a primary key
@@ -137,12 +140,16 @@ public class SchemaSpec{
      * Provides a SchemaAnalyst DataType object from an int value
      * note that typeID must be in range of 0 - # of methods in DataTypeFactory-1
      */
-    private static DataType dataType(int typeID){
-        Class f = (new DataTypeFactory()).getClass();
+    private static DataType dataType(int typeID,int size){
+        Class<? extends DataTypeFactory> f = (new DataTypeFactory()).getClass();
         Method methods[] = f.getMethods();
 
         try{
-            Object dt = methods[typeID].invoke(null);
+            Object dt;
+            if(methods[typeID].getParameterCount()>0)
+                dt = methods[typeID].invoke(null,size);
+            else
+                dt = methods[typeID].invoke(null);
 
             return (DataType) dt;
         }catch(IllegalAccessException e){

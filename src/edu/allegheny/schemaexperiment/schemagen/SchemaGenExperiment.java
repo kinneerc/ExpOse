@@ -54,6 +54,8 @@ public class SchemaGenExperiment extends DoublingExperiment {
             success = true;
          }catch(SchemaGenException e){
             exp.maxSize *= 2;
+            exp.initN(exp.maxSize);
+            System.out.println("Caught Exception, increasing maxsize to "+exp.maxSize);
          }
         }
 
@@ -86,6 +88,10 @@ public class SchemaGenExperiment extends DoublingExperiment {
 
     public void doubleN(){
         schemaSize[doubler] = (schemaSize[doubler] == 0) ? 1 : schemaSize[doubler] * 2;
+        for (int i : schemaSize){
+            System.out.print(i+" ");
+        }
+        System.out.println();
     }
 
     // int tables, int columns, int notnulls, int primaryKeys, int foriegnKeys, 
@@ -130,7 +136,12 @@ public class SchemaGenExperiment extends DoublingExperiment {
         	params = new SchemaExpParams();
 
         // generate the schema
+        long sStart = System.currentTimeMillis();
         n = Generator.randomSchema(schemaSize).getSchema();
+        long sgen = System.currentTimeMillis() - sStart;
+
+        if(params.verbose)
+        System.out.println("Took "+sgen+"ms to generate schema.");
 
         // instantiate objects for parameters
         CoverageCriterion criterionObject = CoverageCriterionFactory.instantiateSchemaCriterion(params.criterion,n,new MySQLDBMS());
@@ -144,9 +155,7 @@ public class SchemaGenExperiment extends DoublingExperiment {
 
         long startTime = System.nanoTime();
 
-
         testSuiteGenerator.generate();
-
 
         long endTime = System.nanoTime();
 
