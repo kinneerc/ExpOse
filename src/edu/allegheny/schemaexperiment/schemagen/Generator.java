@@ -42,7 +42,7 @@ public class Generator{
 
     private static void validateSchema(int tables, int columns, int notnulls, int primaryKeys, int foriegnKeys, int uniques,int checks){
             if (columns < tables){
-                System.out.println(columns+" > "+tables);
+                System.out.println(columns+" < "+tables);
                 throw new SchemaGenException("More tables than columns, tables cannot be empty.");
             }
             if (notnulls > columns){
@@ -50,11 +50,16 @@ public class Generator{
                 throw new SchemaGenException("More NOT NULLs than columns.");
             }
             if (primaryKeys > tables){
-                System.out.println(primaryKeys+" > "+columns);
+                System.out.println(primaryKeys+" > "+tables);
                 throw new SchemaGenException("More PRIMARY KEYs than tables.");
             }
+            if(uniques > tables){
+                System.out.println(uniques+" > "+tables);
+                throw new SchemaGenException("More UNIQUEs than tables.");
 
-            //TODO validation for foriegnKeys, uniques, and checks
+            }
+
+            //TODO validation for foriegnKeys, and checks
 
 
 

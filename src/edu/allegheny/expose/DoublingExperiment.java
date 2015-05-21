@@ -250,6 +250,8 @@ public abstract class DoublingExperiment{
                 if(doubles > 0){
                     // the first run we do not double N before test
                     doubleN();
+                if (verbose)
+                    System.out.println("N doubled.");
                 }
 
                 // run each test multiple times
@@ -257,9 +259,9 @@ public abstract class DoublingExperiment{
                     Double[] result = {(double) doubles, timedTest()};
                     data.add(result);
                 }
+
                 doubles++;
-                if (verbose)
-                    System.out.println("N doubled.");
+                
             }
 
             endTime = System.currentTimeMillis();
@@ -317,14 +319,19 @@ public abstract class DoublingExperiment{
         if (verbose)
             System.out.println("Finding min doubles...");
         while(!checkInitN() && doubles < minimum){
+
+                if(doubles>0){
+                doubleN();
+                if (verbose)
+                    System.out.println("N doubled.");
+                }
+
             // repeat each test multiple times
             for (int count = 0; count < trials; count++){
                 Double[] result = {(double) doubles, timedTest()};
                 data.add(result);
             }
-            doubleN();
-            if (verbose)
-                System.out.println("N doubled.");
+            
             doubles++;
         }
 

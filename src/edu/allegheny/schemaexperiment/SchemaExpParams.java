@@ -21,6 +21,9 @@ public class SchemaExpParams extends DoublingExperimentParams{
     @Parameter(names = {"-doubler"}, description = "Select which schemaDoubler to use")
         public String doubler = "DoubleAll";
 
+    @Parameter(names = {"-subFeature"}, description = "Select how to handle sub-schema features")
+        public String subFeature = "random";
+
     @Parameter(names = {"-schemapackage"}, description = "Select which package to use for schema")
         public String schemaPackage = "parsedcasestudy.";
 
