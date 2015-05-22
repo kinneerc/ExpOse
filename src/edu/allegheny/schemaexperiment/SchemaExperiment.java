@@ -43,12 +43,12 @@ public class SchemaExperiment extends DoublingExperiment{
         if (params.csv.equals("DEFAULT")){
             params.csv = "data/DATA"+params.schema+"_"+params.criterion+"_"+params.datagenerator+"_"+params.doubler+".csv";
         }
-            
+
         String[] settings = {schema,params.criterion,params.datagenerator,params.doubler};
 
         SchemaExperiment exp = new SchemaExperiment(params, args, settings);
-        
-        
+
+
 
         try {
             exp.doubler = instantiateSchemaDoubler(params.doublerPackage+params.doubler);
@@ -56,7 +56,7 @@ public class SchemaExperiment extends DoublingExperiment{
                 | IllegalAccessException e1) {
             // TODO Auto-generated catch block
             e1.printStackTrace();
-        }
+                }
 
         if (params.schema == null){
             Schema one = new parsedcasestudy.iTrust();
@@ -81,12 +81,12 @@ public class SchemaExperiment extends DoublingExperiment{
         exp.data.writeMetafile(exp.termCode, exp.runTime, schema, params.criterion, params.datagenerator, params.doubler);
 
         if (params.verbose){
-        ReverseEngineer eng = new ReverseEngineer();
-        eng.loadData(exp.getData());
+            ReverseEngineer eng = new ReverseEngineer();
+            eng.loadData(exp.getData());
 
-        BigOh ans = eng.analyzeData();
+            BigOh ans = eng.analyzeData();
 
-        System.out.println(ans);
+            System.out.println(ans);
         }
 
     }
@@ -118,6 +118,36 @@ public class SchemaExperiment extends DoublingExperiment{
     }
 
     protected void initN(){
+        //initialize params if needed
+        if(params==null){
+            params = new SchemaExpParams();
+        }
+
+        if (params.schema == null){
+            Schema one = new parsedcasestudy.iTrust();
+            Schema two = new parsedcasestudy.BioSQL();
+            n = SchemaMerger.merge(one, two);
+        }else{
+
+            try {
+                n = instantiateSchema(params.schemaPackage+params.schema);
+            } catch (InstantiationException | IllegalAccessException
+                    | ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                    }
+        }
+
+        try {
+            doubler = instantiateSchemaDoubler(params.doublerPackage+params.doubler);
+        } catch (ClassNotFoundException | InstantiationException
+                | IllegalAccessException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+                }
+
+
+        doubler.setSchema(n);
     }
     public void doubleN(){
         try {
@@ -130,6 +160,9 @@ public class SchemaExperiment extends DoublingExperiment{
     }
     public double timedTest(){
 
+        // initialize N if needed
+        if(n==null)
+            initN();
         // instantiate objects for parameters
         criterionObject = CoverageCriterionFactory.instantiateSchemaCriterion(params.criterion,n,new MySQLDBMS());
         dataGeneratorObject = DataGeneratorFactory.instantiate(params.datagenerator, 0L, 10000, n);
@@ -150,7 +183,7 @@ public class SchemaExperiment extends DoublingExperiment{
         long endTime = System.nanoTime();
 
         if (params.verbose)
-        System.out.println("Time = "+(endTime-startTime));
+            System.out.println("Time = "+(endTime-startTime));
 
         return (double) endTime - startTime;
 

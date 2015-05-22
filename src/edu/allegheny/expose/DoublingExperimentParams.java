@@ -25,7 +25,7 @@ public class DoublingExperimentParams{
     @Parameter(names = {"-minDoubles"}, description = "Minimum number of doubles to try")
         public int minRuns = 5;
 
-    @Parameter(names = {"-lookBack"}, description = "Number of ratios to compair for convergence")
+    @Parameter(names = {"-lookBack"}, description = "Number of ratios to compare for convergence")
         public int lookBack = 4;
 
     @Parameter(names = {"-verbose","-debug"}, description = "Display verbose output")

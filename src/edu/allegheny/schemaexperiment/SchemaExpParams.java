@@ -16,7 +16,7 @@ public class SchemaExpParams extends DoublingExperimentParams{
         public String datagenerator = "directedRandom";
 
     @Parameter(names = {"-doublerpackage"}, description = "Select which package to use for doubler")
-        public String doublerPackage = "edu.allegheny.worstcaseanalyst.schemadoubler.";
+        public String doublerPackage = "edu.allegheny.schemaexperiment.doubler.";
 
     @Parameter(names = {"-doubler"}, description = "Select which schemaDoubler to use")
         public String doubler = "DoubleAll";
