@@ -186,8 +186,15 @@ public abstract class DoublingExperiment{
         if (data.aggregate().size() < minRuns)
             return false;        
 
+        // calcuate Cv amoung last lookback runs
+        ArrayList<Double> runs = new ArrayList<Double>();
+        for(int count = 0; count < lookBack; count++)
+            runs.add(data.getRatio(count));
+
+        double diff = coefficientOfVariation(runs);
+
         // calulate percent differance between last run and the lookback run
-        double diff = percentDifferance(data.getRatio(0),data.getRatio(lookBack-1)); 
+        /* double diff = percentDifferance(data.getRatio(0),data.getRatio(lookBack-1));  */
 
         if(verbose)
             System.out.println("Convergence Check: Change = "+diff+" Ratio = "+data.getRatio(0));
@@ -316,6 +323,8 @@ public abstract class DoublingExperiment{
     public int tuneInitN(){
         int doubles = 0;
 
+        data = new ExperimentResults();
+
         if (verbose)
             System.out.println("Finding min doubles...");
         while(!checkInitN() && doubles < minimum){
@@ -411,4 +420,3 @@ public abstract class DoublingExperiment{
     protected abstract void doubleN();
 
 }
-
