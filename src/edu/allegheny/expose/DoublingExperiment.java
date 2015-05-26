@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import com.beust.jcommander.JCommander;
 
-import edu.allegheny.expose.tune.DefaultSuite;
-
 /**
  * This abstract class provides the needed methods
  * to conduct a meaningfull doubling experiment.
@@ -75,7 +73,7 @@ public abstract class DoublingExperiment{
         // if tuning is enabled, then set tolerance and trials by automatic tuning
         if(!noTune){
             trials = tuneTrials();
-            convergenceTolerance = Tuner.tuneTolerance(new DefaultSuite());
+            convergenceTolerance = Tuner.tuneTolerance(params.forceRetune);
         }else{
             trials = params.trials;
             convergenceTolerance = params.convergence;
@@ -156,6 +154,7 @@ public abstract class DoublingExperiment{
                 medianTime.add(ExperimentResults.centralTendency(runtimeRecords));
             }
             cv = coefficientOfVariation(medianTime);
+            if(verbose)
             System.out.printf("Run: %2d Trials: %2d Cv: %4.4f\n",run,trials,cv);
 
             if (cv < min){
@@ -164,6 +163,7 @@ public abstract class DoublingExperiment{
             }else{
                 lastUpdate++;
                 if (lastUpdate > trialsGiveUp){
+                    if(verbose)
                     System.out.println("Cv not improved for "+trialsGiveUp+" runs.");
                     break;
                 }

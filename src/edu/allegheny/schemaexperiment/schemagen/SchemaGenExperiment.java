@@ -101,8 +101,8 @@ public class SchemaGenExperiment extends DoublingExperiment {
 
     private void setSubFeatureMode(String sub){
         switch(sub){
-            case "number":this.subDoublerType = 1; break;
-            case "size" : this.subDoublerType = 2; break;
+            case "min":this.subDoublerType = 1; break;
+            case "max" : this.subDoublerType = 2; break;
             default: this.subDoublerType = 0; break;
         }
     }

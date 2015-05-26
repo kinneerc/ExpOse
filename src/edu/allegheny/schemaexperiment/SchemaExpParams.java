@@ -6,25 +6,25 @@ import edu.allegheny.expose.DoublingExperimentParams;
 
 public class SchemaExpParams extends DoublingExperimentParams{
 
-    @Parameter(names = {"-schema","-s"}, description = "Select which schema to use")
+    @Parameter(names = {"--schema","-s"}, description = "Select which schema to use")
         public String schema = null;
 
-    @Parameter(names = {"-criterion"}, description = "Select which criterion to use")
+    @Parameter(names = {"--criterion"}, description = "Select which criterion to use")
         public String criterion = "AICC";
 
-    @Parameter(names = {"-datagenerator"}, description = "Select which schema to use")
+    @Parameter(names = {"--datagenerator"}, description = "Select which schema to use")
         public String datagenerator = "directedRandom";
 
-    @Parameter(names = {"-doublerpackage"}, description = "Select which package to use for doubler")
+    @Parameter(names = {"--doublerpackage"}, description = "Select which package to use for doubler")
         public String doublerPackage = "edu.allegheny.schemaexperiment.doubler.";
 
-    @Parameter(names = {"-doubler"}, description = "Select which schemaDoubler to use")
+    @Parameter(names = {"--doubler"}, description = "Select which schemaDoubler to use")
         public String doubler = "DoubleAll";
 
-    @Parameter(names = {"-subFeature"}, description = "Select how to handle sub-schema features")
+    @Parameter(names = {"--subFeature"}, description = "Select how to handle sub-schema features")
         public String subFeature = "random";
 
-    @Parameter(names = {"-schemapackage"}, description = "Select which package to use for schema")
+    @Parameter(names = {"--schemapackage"}, description = "Select which package to use for schema")
         public String schemaPackage = "parsedcasestudy.";
 
 }
