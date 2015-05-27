@@ -46,6 +46,7 @@ public class ExperimentResults{
         this.header = header;
 
         // initialize writer to given dir
+        if(CSVDir != null){
         try {
             writer = new CSVWriter(new FileWriter(CSVDir,append));
             // write header
@@ -56,6 +57,7 @@ public class ExperimentResults{
             e.printStackTrace();
         }
         }
+    }
 
     public ExperimentResults(){
         this(null, new String[] {"Doubles","Time"},false);

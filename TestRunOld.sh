@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# make needed directories if they do not exist
+mkdir data
+mkdir tuning
+
 declare -a criterions=(
 "ICC"
 )
@@ -33,7 +37,6 @@ do
         do
             for doubler in "${doublers[@]}"
             do
-
                 echo "java $classname -criterion $criterion -datagenerator $datagenerator -schema $schema -doubler $doubler -maxTime 50"
 
                 java $classname --criterion $criterion --datagenerator $datagenerator --schema $schema --doubler $doubler --maxTime 50
