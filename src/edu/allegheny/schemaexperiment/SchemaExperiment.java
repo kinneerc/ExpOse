@@ -40,7 +40,7 @@ public class SchemaExperiment extends DoublingExperiment{
             schema = "iTrustBioSQLMerged";
         }
 
-        if (params.csv.equals("DEFAULT")){
+        if (params.csv.equals("LastExperiment.csv.tmp")){
             params.csv = "data/DATA"+params.schema+"_"+params.criterion+"_"+params.datagenerator+"_"+params.doubler+".csv";
         }
 
@@ -78,15 +78,15 @@ public class SchemaExperiment extends DoublingExperiment{
 
         exp.runExperiment();
 
-        exp.data.writeMetafile(exp.termCode, exp.runTime, schema, params.criterion, params.datagenerator, params.doubler);
+        ReverseEngineer eng = new ReverseEngineer();
+        eng.loadData(exp.getData());
+        BigOh ans = eng.analyzeData();
+
+
+        exp.data.writeMetafile(exp.termCode, exp.runTime, schema, params.criterion, params.datagenerator, params.doubler,ans.toString());
 
         if (params.verbose){
-            ReverseEngineer eng = new ReverseEngineer();
-            eng.loadData(exp.getData());
-
-            BigOh ans = eng.analyzeData();
-
-            System.out.println(ans);
+            exp.printBigOh();
         }
 
     }

@@ -45,28 +45,27 @@ public class ExperimentResults{
         data = new ArrayList<Double[]>(); 
         this.header = header;
 
-        if (CSVDir != null){
         // initialize writer to given dir
         try {
             writer = new CSVWriter(new FileWriter(CSVDir,append));
             // write header
             writer.writeNext(header);
+            writer.flush();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         }
-    }
 
     public ExperimentResults(){
         this(null, new String[] {"Doubles","Time"},false);
     }
 
-    public void writeMetafile(int termcode, long runtime, String schema, String criterion, String generator, String doubler){
+    public void writeMetafile(int termcode, long runtime, String schema, String criterion, String generator, String doubler, String answer){
         try{
         String filename = "META"+schema+"_"+criterion+"_"+generator+"_"+doubler+".csv";
-        String header = "\"schema\",\"criterion\",\"generator\",\"doubler\",\"termcode\",\"runtime\"";
-        String content = "\""+schema+"\",\""+criterion+"\",\""+generator+"\",\""+doubler+"\","+termcode+","+runtime;
+        String header = "\"schema\",\"criterion\",\"generator\",\"doubler\",\"termcode\",\"runtime\",\"bigOh\"";
+        String content = "\""+schema+"\",\""+criterion+"\",\""+generator+"\",\""+doubler+"\","+termcode+","+runtime+",\""+answer+"\"";
 
         PrintWriter pw = new PrintWriter("data/"+filename);
         pw.println(header);
@@ -279,6 +278,9 @@ public class ExperimentResults{
         return ratio;
     }
 
+    public void reset(){
+        data = new ArrayList<Double[]>();
+    }
 
     // Wrappers for data
 

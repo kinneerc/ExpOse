@@ -11,7 +11,9 @@ import org.schemaanalyst.testgeneration.coveragecriterion.CoverageCriterionFacto
 
 import com.beust.jcommander.JCommander;
 
+import edu.allegheny.expose.BigOh;
 import edu.allegheny.expose.DoublingExperiment;
+import edu.allegheny.expose.ReverseEngineer;
 import edu.allegheny.schemaexperiment.SchemaExpParams;
 
 public class SchemaGenExperiment extends DoublingExperiment {
@@ -48,7 +50,7 @@ public class SchemaGenExperiment extends DoublingExperiment {
         SchemaExpParams params = new SchemaExpParams();
         new JCommander(params,args);
 
-        if (params.csv.equals("DEFAULT")){
+        if (params.csv.equals("LastExperiment.csv.tmp")){
             params.csv = "data/DATA"+params.schema+"_"+params.criterion+"_"+params.datagenerator+"_"+params.doubler+".csv";
         }
 
@@ -69,8 +71,10 @@ public class SchemaGenExperiment extends DoublingExperiment {
                 System.out.println("Caught Exception, increasing maxsize to "+exp.maxSize);
             }
         }
-
-        exp.data.writeMetafile(exp.termCode, exp.runTime,"Generated", params.criterion, params.datagenerator, params.doubler);
+ReverseEngineer eng = new ReverseEngineer();
+        eng.loadData(exp.getData());
+        BigOh ans = eng.analyzeData();
+        exp.data.writeMetafile(exp.termCode, exp.runTime,"Generated", params.criterion, params.datagenerator, params.doubler,ans.toString());
 
         if (params.verbose){
             exp.printBigOh();

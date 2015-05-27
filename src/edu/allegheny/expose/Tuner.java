@@ -143,8 +143,6 @@ trialloop:
 
                 }
 
-
-
             }
             successRate = (double) success /(double) runs;
             System.out.printf("Accuracy %4.2f - Tolerance %3.4f\n",successRate,tolerance);

@@ -237,11 +237,14 @@ public abstract class DoublingExperiment{
             // tune minRuns if desired
             if (!noMinimum){
                 tuneInitN();
-            }else{
+            }
+            else{
                 // data is initialized in tuneInitN
                 // if we do not do this, we need to init data
-                data = new ExperimentResults();
+                /* data = new ExperimentResults(); */
+                data.reset();
             }
+
 
             int doubles = data.aggregate().size();
 
@@ -323,7 +326,9 @@ public abstract class DoublingExperiment{
     public int tuneInitN(){
         int doubles = 0;
 
-        data = new ExperimentResults();
+        /* data = new ExperimentResults(); */
+
+        data.reset();
 
         if (verbose)
             System.out.println("Finding min doubles...");
