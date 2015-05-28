@@ -13,14 +13,14 @@ import edu.allegheny.expose.tune.*;
 public class Tuner {
 
     private static final double initialTolerance = 20;
-    private static final int trials = 2;
+    private static final int trials = 5;
     /**
      * Desired success rate for tuning.
      *
      * 1.0 = perfect score, all passing
      * 
      */
-    private static final double toleranceGoal = 0.90;
+    private static final double toleranceGoal = 0.95;
 
     public static void main(String[] args){
         System.out.println(Tuner.tuneTolerance(new DefaultSuite()));
@@ -136,7 +136,7 @@ trialloop:
 
                     // check if it is possible to pass the tolerance test
                     // allows us to give up when we fail too many times
-                    if( (double) (bms.size()-runs+success) / (double) bms.size() < toleranceGoal){
+                    if( (double) (bms.size()*trials-runs+success) / (double) bms.size()*trials < toleranceGoal){
                         System.out.println("Too many failures, tightening tolerance...");
                         break trialloop;
                     }
