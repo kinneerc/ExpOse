@@ -11,7 +11,7 @@ public class LinLogExperiment extends BenchMark{
 
     long value;
 
-    public static final int[] algs = {1,2,3,4};
+    public static final int[] algs = {1,2,3,4,5};
 
     public LinLogExperiment(String[] args, int alg){
         super(args);
@@ -31,6 +31,9 @@ public class LinLogExperiment extends BenchMark{
                     correct = linearithmic;
                      break;
             case 5: name = "cubic";
+                    correct = cubic;
+                    break;
+            case 6: name = "weightedCubic";
                     correct = cubic;
                     break;
         }
@@ -67,6 +70,8 @@ public class LinLogExperiment extends BenchMark{
                     break;
             case 5: testAlgs.cubic(value);
                     break;
+            case 6 : testAlgs.weightedCubic(value);
+                     break;
         }
 
         long endTime = System.nanoTime();

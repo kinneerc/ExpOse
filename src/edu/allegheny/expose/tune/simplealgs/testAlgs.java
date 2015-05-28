@@ -62,6 +62,32 @@ public class testAlgs{
             }
         }
     }
+
+    public static void weightedCubic(long n){
+
+        for (int count = 0; count < n; count++){
+            try{
+                Thread.sleep(100);
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
+        }
+
+          for (int count = 0; count < n; count++){
+            for (int count2 = 0; count2 < n; count2++){
+                for (int count3 = 0; count3 < n; count3++){
+                    try{
+                Thread.sleep(1);
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
+
+                }
+            }
+        }
+
+
+    }
     public static void factorial(long n) {
         for(long i=0; i<n; i++) {
             factorial(n-1);
