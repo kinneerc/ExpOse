@@ -14,6 +14,8 @@ declare -a datagenerators=(
 
 declare -a schemas=(
 "UnixUsage"
+"iTrust"
+"BioSQL"
 )
 
 declare -a doublers=(
@@ -37,9 +39,7 @@ do
         do
             for doubler in "${doublers[@]}"
             do
-                echo "java $classname -criterion $criterion -datagenerator $datagenerator -schema $schema -doubler $doubler -maxTime 50"
-
-                java $classname --criterion $criterion --datagenerator $datagenerator --schema $schema --doubler $doubler --maxTime 50
+                java $classname --criterion $criterion --datagenerator $datagenerator --schema $schema --doubler $doubler --maxTime 36 --overwrite --minDoubles 25
 
             done
         done
