@@ -21,19 +21,37 @@ public class Generator{
             iargs[count] = Integer.parseInt(args[count]);
         }
 
-        SchemaSpec sp = randomSchema(iargs[0],iargs[1],iargs[2],iargs[3],iargs[4],iargs[5],0,iargs[6],iargs[7]);
+        int attempts = 0;
+
+        int maxAttempts = 20;
+
+        SchemaSpec sp = null;
+
+        while (attempts++ < maxAttempts){
+
+        try{
+        sp = randomSchema(iargs[0],iargs[1],iargs[2],iargs[3],iargs[4],iargs[5],0,iargs[6],iargs[7]);
+        attempts = maxAttempts;
+        }catch(SchemaGenException e){
+        }
+
+        }
+
+
+        if (sp != null){
 
         Schema s = sp.getSchema();
         
-        System.out.println("Generator done!");
-
         SQLWriter writer = new SQLWriter();
 
         for (String x : writer.writeCreateTableStatements(s))
             System.out.println(x);
 
+        }else{
+            throw new SchemaGenException("Could not generate schema after "+attempts+" tries.");
         }
 
+    }
     }
 
     public static SchemaSpec randomSchema(int[] sF){
@@ -140,8 +158,8 @@ public class Generator{
 
            
            if (!pfks.hasNext()){
-            System.out.println("Choked on fkey: "+count);
-           throw new SchemaGenException("Cannot provide requested FKeys");
+            /* System.out.println("Choked on fkey: "+count); */
+           throw new SchemaGenException("Cannot provide requested FKeys "+count);
            }
 
            PotentialForeignKey pfk = pfks.next();
@@ -169,8 +187,9 @@ public class Generator{
                 if (tries++ > 1.5*tables)
                     throw new SchemaGenException("Could not provide requested UNIQUES.");
                 pu = fkg.getPotUnique(rand.nextInt(tables));
-            }while(pu.getMaxSize()==0);
-            uqs.add(pu.getUniqueBySize(rand.nextInt(pu.getMaxSize())+1));
+            }while(pu.getMaxSize()==0||compoundKeySize>0&&pu.getMaxSize()<compoundKeySize);
+            int size = (compoundKeySize>0) ? compoundKeySize : rand.nextInt(pu.getMaxSize())+1;
+            uqs.add(pu.getUniqueBySize(size));
         }
 
         // TODO  checks
