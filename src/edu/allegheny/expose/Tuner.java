@@ -6,13 +6,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import edu.allegheny.expose.tune.*;
 
 public class Tuner {
 
-    private static final double initialTolerance = 20;
+    private static final double initialTolerance = 2;
     private static final int trials = 5;
     /**
      * Desired success rate for tuning.
@@ -94,7 +95,7 @@ public class Tuner {
 
     private static double readRecord(File target){
         try {
-            String rec = Files.readAllLines(target.toPath()).get(0);
+            String rec = Files.readAllLines(target.toPath(), StandardCharsets.US_ASCII).get(0);
             return Double.parseDouble(rec);
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -136,7 +137,10 @@ trialloop:
 
                     // check if it is possible to pass the tolerance test
                     // allows us to give up when we fail too many times
-                    if( (double) (bms.size()*trials-runs+success) / (double) bms.size()*trials < toleranceGoal){
+                    double numerator = (double) (bms.size()*trials-runs+success);
+                    double denominator = (double) bms.size()*trials;
+                                        
+                    if( numerator / denominator < toleranceGoal){
                         System.out.println("Too many failures, tightening tolerance...");
                         break trialloop;
                     }

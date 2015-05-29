@@ -32,6 +32,10 @@ public class DefaultSuite extends BenchMarkSuite {
             public boolean hasNext(){
                 return !benchmarks.isEmpty();
             }
+			@Override
+			public void remove() {
+				throw new java.lang.UnsupportedOperationException();
+			}
         };
     }
 

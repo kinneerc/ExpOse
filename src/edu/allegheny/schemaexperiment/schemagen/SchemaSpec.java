@@ -146,9 +146,9 @@ public class SchemaSpec{
 
         try{
             Object dt;
-            if(methods[typeID].getParameterCount()==1)
+            if(methods[typeID].getParameterTypes().length==1)
                 dt = methods[typeID].invoke(null,size);
-            else if (methods[typeID].getParameterCount()==2)
+            else if (methods[typeID].getParameterTypes().length==2)
                 dt = methods[typeID].invoke(null,size,size); 
             else
                 dt = methods[typeID].invoke(null);
