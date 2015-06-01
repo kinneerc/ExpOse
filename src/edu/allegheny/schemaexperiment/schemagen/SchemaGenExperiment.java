@@ -131,7 +131,7 @@ public class SchemaGenExperiment extends DoublingExperiment {
         setSubFeatureMode(params.subFeature);
         setDoubler(params.doubler);
         this.params = params;
-        this.maxSize = 1000;
+        this.maxSize = 100;
     }
 
     private void setDoubler(String doubler){
@@ -168,9 +168,8 @@ public class SchemaGenExperiment extends DoublingExperiment {
 
             // if we want the subsizes to be size n, then make it so
             switch(subDoublerType){
-                case 0: schemaSize[7] = -1; schemaSize[8] = -1; break;
                 case 1: schemaSize[7] = 10; schemaSize[8] = 1; break;
-                case 2: if (params.doubler.equals("columns")) 
+                case 0: case 2: if (params.doubler.equals("columns")) 
                             schemaSize[7] *= 2; 
                         else
                             schemaSize[8] *= 2; 
