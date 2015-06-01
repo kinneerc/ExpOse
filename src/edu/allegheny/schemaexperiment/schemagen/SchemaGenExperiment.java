@@ -85,6 +85,7 @@ public class SchemaGenExperiment extends DoublingExperiment {
             }catch(SchemaGenException e){
                 exp.maxSize *= 2;
                 exp.initN(exp.maxSize);
+                if(params.verbose)
                 System.out.println("Caught Exception, increasing maxsize to "+exp.maxSize);
             }
         }
@@ -178,10 +179,12 @@ public class SchemaGenExperiment extends DoublingExperiment {
 
         }
 
+        if(params.verbose){
         for (int i : schemaSize){
             System.out.print(i+" ");
         }
         System.out.println();
+        }
     }
 
     // int tables, int columns, int notnulls, int primaryKeys, int foriegnKeys, 
@@ -253,8 +256,10 @@ public class SchemaGenExperiment extends DoublingExperiment {
             if(maxSize==0)
                 maxSize = 10;
             initN(maxSize);
+            if(params.verbose){
             for (int i : schemaSize)
                 System.out.print(i+" ");
+            }
         }
 
         // instantiate the params if nessissary
@@ -271,12 +276,14 @@ public class SchemaGenExperiment extends DoublingExperiment {
             }catch(SchemaGenException e){
                 if(doubler==-1){
                     caught=true;
+                    if(params.verbose){
                     System.out.println("Caught SchemaGenException, trying again...");
 
                     for (int i : schemaSize){
                         System.out.print(i+" ");
                     }
                     System.out.println();
+                    }
 
                     e.printStackTrace();
 
