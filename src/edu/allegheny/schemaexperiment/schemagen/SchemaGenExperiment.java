@@ -15,6 +15,7 @@ import edu.allegheny.expose.BigOh;
 import edu.allegheny.expose.DoublingExperiment;
 import edu.allegheny.expose.ReverseEngineer;
 import edu.allegheny.schemaexperiment.SchemaExpParams;
+import edu.allegheny.schemaexperiment.doubler.Metrics;
 
 public class SchemaGenExperiment extends DoublingExperiment {
 
@@ -29,7 +30,7 @@ public class SchemaGenExperiment extends DoublingExperiment {
     // for schema features that have size of their own
     // such as columns with VARCHAR which can have a variable number
     // of characters up to a max size, or compound keys that can
-    // have some number of columns
+    // have some number of columns; 
     //
     // 0 - subsizes uniformly distributed 1 - max
     // 1 - subsizes = 1
@@ -43,24 +44,40 @@ public class SchemaGenExperiment extends DoublingExperiment {
     Schema n;
     SchemaExpParams params;
 
-    static final String[] CSVHEADER = {"Doubles","Time","Criterion",
-        "DataGenerator","Doubler"}; 
+    static final String[] CSVHEADER = {"Doubles","Time","tables","fKeys","pKeys","uniques","notNulls",
+        "checks", "constraints","columns","Schema","Criterion","DataGenerator","Doubler","SubDoubler"}; 
+
+    public static class writeMeta extends Thread {
+        SchemaGenExperiment exp;
+        public writeMeta(SchemaGenExperiment exp){
+            this.exp = exp;
+        }
+        public void run() {
+            exp.data.writeMetafile(exp.termCode, exp.runTime, exp.params.schema, exp.params.criterion, exp.params.datagenerator, exp.params.doubler, "KILLED");
+        }
+    }
 
     public static void main(String[] args){
         SchemaExpParams params = new SchemaExpParams();
         new JCommander(params,args);
 
         if (params.csv.equals("LastExperiment.csv.tmp")){
-            params.csv = "data/DATA"+params.schema+"_"+params.criterion+"_"+params.datagenerator+"_"+params.doubler+".csv";
+            params.csv = "data/DATA"+params.schema+"_"+params.criterion+"_"+params.datagenerator+"_"+params.doubler+"_"+params.subFeature+".csv";
         }
 
-        String[] settings = {params.criterion,params.datagenerator,params.doubler};
+        String[] settings = {params.criterion,params.datagenerator,params.doubler,params.subFeature};
 
         SchemaGenExperiment exp = new SchemaGenExperiment(params, args, settings);
 
         boolean success = false;
 
         exp.initN(exp.maxSize);
+
+        // almost ready to run experiment, first, create a shutdown hook in case our job is killed
+        Thread printIfKilled = new writeMeta(exp);
+
+        Runtime.getRuntime().addShutdownHook(printIfKilled);
+
         while(!success){
             try{
                 exp.runExperiment();
@@ -71,7 +88,11 @@ public class SchemaGenExperiment extends DoublingExperiment {
                 System.out.println("Caught Exception, increasing maxsize to "+exp.maxSize);
             }
         }
-ReverseEngineer eng = new ReverseEngineer();
+
+        // if finished, then we do not require the shutdown hook, remove it
+        Runtime.getRuntime().removeShutdownHook(printIfKilled);
+
+        ReverseEngineer eng = new ReverseEngineer();
         eng.loadData(exp.getData());
         BigOh ans = eng.analyzeData();
         exp.data.writeMetafile(exp.termCode, exp.runTime,"Generated", params.criterion, params.datagenerator, params.doubler,ans.toString());
@@ -80,6 +101,28 @@ ReverseEngineer eng = new ReverseEngineer();
             exp.printBigOh();
         }
 
+    }
+
+    // override default to save schema size statistics
+    @Override
+    protected Double[] getResult(int doubles){
+        if(n==null){
+            if(maxSize==0)
+                maxSize = 10;
+            initN(maxSize);
+        }
+
+        int[] stats = Metrics.allData(n);
+        Double[] ans = new Double[2+stats.length];
+        ans[0] = (double) doubles;   // TODO consider how uniques should be allowed
+        // i.e., one per table? overlapping columns allowed?
+        // for now, assume same as primary keys
+        ans[1] = timedTest();
+        int count = 2;
+        for (int x : stats)
+            ans[count++] = (double) x;
+
+        return ans;
     }
 
     public SchemaGenExperiment(SchemaExpParams params, String[] args, String[] settings){
@@ -105,8 +148,8 @@ ReverseEngineer eng = new ReverseEngineer();
 
     private void setSubFeatureMode(String sub){
         switch(sub){
-            case "min":this.subDoublerType = 1; break;
-            case "max" : this.subDoublerType = 2; break;
+            case "number":this.subDoublerType = 1; break;
+            case "size" : this.subDoublerType = 2; break;
             default: this.subDoublerType = 0; break;
         }
     }
@@ -119,14 +162,17 @@ ReverseEngineer eng = new ReverseEngineer();
             }
         }else{
 
+            if (!params.subFeature.equals("size"))
             schemaSize[doubler] = (schemaSize[doubler] == 0) ? 1 : schemaSize[doubler] * 2;
 
             // if we want the subsizes to be size n, then make it so
             switch(subDoublerType){
                 case 0: schemaSize[7] = -1; schemaSize[8] = -1; break;
                 case 1: schemaSize[7] = 10; schemaSize[8] = 1; break;
-                case 2: schemaSize[7] = schemaSize[doubler]; 
-                        schemaSize[8] = schemaSize[doubler]; 
+                case 2: if (params.doubler.equals("columns")) 
+                            schemaSize[7] *= 2; 
+                        else
+                            schemaSize[8] *= 2; 
                         break;
             }
 
@@ -142,20 +188,55 @@ ReverseEngineer eng = new ReverseEngineer();
     // int uniques,int checks
 
     public void initN(int maxSize){
-        schemaSize = new int[] {1,1,0,0,0,0,0,0,0};
-        switch(doubler){
-            case 0: case 2: case 3: schemaSize[1] = maxSize; break;
-            case 4: case 5: 
+        schemaSize = new int[] {1,1,0,0,0,0,0,10,1};
+
+        if (params == null)
+            params = new SchemaExpParams();
+
+        switch(params.subFeature){
+            case "number":
+                switch(doubler){
+                    case 0: case 2: schemaSize[1] = maxSize; break;
+                    case 4:         schemaSize[4] = 1;
                                     double[] quad = quadForm(1,-1,-maxSize);
                                     double needed = Math.max(quad[0],quad[1]);
                                     needed = Math.ceil(needed*2.5); 
                                     schemaSize[0] = (int) needed; schemaSize[1] = (int) needed; 
                                     break;
-            case -1: schemaSize = new int[] {2,40,1,1,1,1,1,1,1};
-                     // TODO consider how uniques should be allowed
-                     // i.e., one per table? overlapping columns allowed?
-                     // for now, assume same as primary keys
+                    case 5: schemaSize[5] = 1; schemaSize[0] = maxSize; schemaSize[1] = maxSize; break;
+                    case 3: schemaSize[3] = 1; schemaSize[0] = maxSize; schemaSize[1] = maxSize; break;
+                    case -1: schemaSize = new int[] {2,40,1,1,1,1,1,10,1}; break;
+                }
+                break;
+            case "size":
+                switch(doubler){
+                    case 0: case 2: schemaSize[1] = maxSize; break;
+                    case 4: schemaSize[4] = 1; schemaSize[0] = 2;schemaSize[1] = maxSize; break;
+                    case 5: schemaSize[5] = 1; schemaSize[1] = maxSize; break;
+                    case 3: schemaSize[3] = 1; schemaSize[1] = maxSize; break;
+                    case 1:  schemaSize = new int[] {1,40,0,0,0,0,0,10,1}; break;
+                    case -1: schemaSize = new int[] {2,40,1,1,1,1,1,10,1}; break;
+                }
+                break;
+            /*both*/ default:
+                switch(doubler){
+                    case 0: case 2: schemaSize[1] = maxSize; break;
+                    case 4:  
+                                    double[] quad = quadForm(1,-1,-maxSize);
+                                    double needed = Math.max(quad[0],quad[1]);
+                                    needed = Math.ceil(needed*2.5); 
+                                    schemaSize[0] = (int) needed; schemaSize[1] = (int) (needed*needed);
+                                    schemaSize[4] = 1;
+                                    break;
+                    case 5: schemaSize[5] = 1; schemaSize[0] = maxSize; schemaSize[1] = maxSize*maxSize; break;
+                    case 3: schemaSize[3] = 1; schemaSize[0] = maxSize; schemaSize[1] = maxSize*maxSize; break;
+                    case -1: schemaSize = new int[] {2,40,1,1,1,1,1,10,1}; break;
+                }
+                break;
         }
+        
+        n = Generator.randomSchema(schemaSize).getSchema();
+
     }
 
     private double[] quadForm(double a, double b, double c){

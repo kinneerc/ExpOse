@@ -22,7 +22,7 @@ public class SchemaExpParams extends DoublingExperimentParams{
         public String doubler = "DoubleAll";
 
     @Parameter(names = {"--subFeature"}, description = "Select how to handle sub-schema features")
-        public String subFeature = "random";
+        public String subFeature = "both";
 
     @Parameter(names = {"--schemapackage"}, description = "Select which package to use for schema")
         public String schemaPackage = "parsedcasestudy.";

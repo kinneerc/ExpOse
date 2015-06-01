@@ -226,6 +226,16 @@ public abstract class DoublingExperiment{
         System.out.println(ans);
     }
 
+    public BigOh getBigOh(){
+        ReverseEngineer eng = new ReverseEngineer();
+        eng.loadData(getData());
+        return eng.analyzeData();
+    }
+
+    protected Double[] getResult(int doubles){
+        return new Double[] {(double) doubles, timedTest()};
+    }
+
     /**
      * Runs doubling experiment until convergence is reached
      */
@@ -266,7 +276,7 @@ public abstract class DoublingExperiment{
 
                 // run each test multiple times
                 for (int count = 0; count < trials; count++){
-                    Double[] result = {(double) doubles, timedTest()};
+                    Double[] result = getResult(doubles);
                     data.add(result);
                 }
 
@@ -342,7 +352,7 @@ public abstract class DoublingExperiment{
 
             // repeat each test multiple times
             for (int count = 0; count < trials; count++){
-                Double[] result = {(double) doubles, timedTest()};
+                Double[] result = getResult(doubles);
                 data.add(result);
             }
             

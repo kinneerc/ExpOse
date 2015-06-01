@@ -15,6 +15,7 @@ import com.beust.jcommander.JCommander;
 import edu.allegheny.expose.*;
 import edu.allegheny.schemaexperiment.doubler.SchemaDoubler;
 import edu.allegheny.schemaexperiment.doubler.SchemaDoublerException;
+import edu.allegheny.schemaexperiment.doubler.Metrics;
 
 public class SchemaExperiment extends DoublingExperiment{
 
@@ -25,8 +26,18 @@ public class SchemaExperiment extends DoublingExperiment{
     SchemaExpParams params;
     Schema n;
 
-    static final String[] CSVHEADER = {"Doubles","Time","Schema","Criterion",
-        "DataGenerator","Doubler"}; 
+    static final String[] CSVHEADER = {"Doubles","Time","tables","fKeys","pKeys","uniques","notNulls",
+        "checks", "constraints","columns","Schema","Criterion","DataGenerator","Doubler"}; 
+
+    public static class writeMeta extends Thread {
+        SchemaExperiment exp;
+        public writeMeta(SchemaExperiment exp){
+            this.exp = exp;
+        }
+        public void run() {
+             exp.data.writeMetafile(exp.termCode, exp.runTime, exp.params.schema, exp.params.criterion, exp.params.datagenerator, exp.params.doubler, "KILLED");
+        }
+    }
 
     public static void main(String[] args){
 
@@ -47,8 +58,6 @@ public class SchemaExperiment extends DoublingExperiment{
         String[] settings = {schema,params.criterion,params.datagenerator,params.doubler};
 
         SchemaExperiment exp = new SchemaExperiment(params, args, settings);
-
-
 
         try {
             exp.doubler = instantiateSchemaDoubler(params.doublerPackage+params.doubler);
@@ -76,7 +85,15 @@ public class SchemaExperiment extends DoublingExperiment{
 
         exp.doubler.setSchema(exp.n);
 
+        // almost ready to run experiment, first, create a shutdown hook in case our job is killed
+        Thread printIfKilled = new writeMeta(exp);
+
+        Runtime.getRuntime().addShutdownHook(printIfKilled);
+
         exp.runExperiment();
+
+        // if finished, then we do not require the shutdown hook, remove it
+        Runtime.getRuntime().removeShutdownHook(printIfKilled);
 
         ReverseEngineer eng = new ReverseEngineer();
         eng.loadData(exp.getData());
@@ -89,6 +106,20 @@ public class SchemaExperiment extends DoublingExperiment{
             exp.printBigOh();
         }
 
+    }
+
+    // override default to save schema size statistics
+    @Override
+    protected Double[] getResult(int doubles){
+        int[] stats = Metrics.allData(n);
+        Double[] ans = new Double[2+stats.length];
+        ans[0] = (double) doubles;
+        ans[1] = timedTest();
+        int count = 2;
+        for (int x : stats)
+            ans[count++] = (double) x;
+
+        return ans;
     }
 
     public SchemaExperiment(SchemaExpParams params, String[] args, String[] settings){
