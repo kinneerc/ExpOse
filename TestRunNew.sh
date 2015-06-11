@@ -8,11 +8,6 @@ declare -a datagenerators=(
 "directedRandom"
 )
 
-declare -a schemas=(
-"UnixUsage"
-"BioSQL"
-)
-
 declare -a doublersWSub=(
 "columns"
 "primaryKeys"
@@ -41,19 +36,16 @@ for criterion in "${criterions[@]}"
 do
     for datagenerator in "${datagenerators[@]}"
     do
-        for schema in "${schemas[@]}"
+        for doubler in "${doublersWSub[@]}"
         do
-            for doubler in "${doublersWSub[@]}"
+            for subDoubler in "${subDoublers[@]}"
             do
-                for subDoubler in "${subDoublers[@]}"
-                do
-                    java $classname --criterion $criterion --datagenerator $datagenerator --doubler $doubler --subFeature $subDoubler --maxTime 50 --minDoubles 15 --overwrite
-                done
+                java $classname --criterion $criterion --datagenerator $datagenerator --doubler $doubler --subFeature $subDoubler --maxTime 50 --minDoubles 15 --overwrite
             done
-            for doubler in "${doublersNSub[@]}"
-            do
-                java $classname --criterion $criterion --datagenerator $datagenerator --doubler $doubler --maxTime 50 --subFeature number --minDoubles 15 --overwrite
-            done
+        done
+        for doubler in "${doublersNSub[@]}"
+        do
+            java $classname --criterion $criterion --datagenerator $datagenerator --doubler $doubler --maxTime 50 --subFeature number --minDoubles 15 --overwrite
         done
     done
 done
