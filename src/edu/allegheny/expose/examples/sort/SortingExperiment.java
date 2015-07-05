@@ -16,21 +16,31 @@ public class SortingExperiment extends DoublingExperiment{
     public static String[] algs = {"quick", "insertion", "merge", "selection", "bubble"};
 
     public static void main(String[] args){
-        SortingExperiment exp = new SortingExperiment();
-        exp.alg = Integer.parseInt(args[0]);
-        switch (exp.alg){
-            case 1: exp.name = "quick";
+
+        String[] nargs = new String[args.length-1];
+
+        for(int count = 1; count < args.length; count++)
+            nargs[count-1] = args[count];
+
+        SortingExperiment exp = new SortingExperiment(nargs);
+        exp.name = args[0];
+
+        switch (exp.name){
+            case "quick": 
+                    exp.alg = 1;
                     break;
-            case 2: exp.name = "insertion";
+            case "insertion": 
+                    exp.alg = 2;
                     break;
-            case 3: exp.name = "merge";
+            case "merge": 
+                    exp.alg = 3;
                     break;
-            case 4: exp.name = "selection";
+            case "selection":
+                    exp.alg = 4;
                     break;
-            case 5: exp.name = "bubble";
+            case "bubble": 
+                    exp.alg = 5;
                     break;
-            default: System.out.println("Invalid choice, use: quick, insertion, merge, selection, or bubble");
-                     return;
         }
 
         exp.initN();
@@ -42,6 +52,13 @@ public class SortingExperiment extends DoublingExperiment{
         BigOh ans = eng.analyzeData();
         System.out.println(exp.name+"sort is "+ans);
 
+    }
+
+    public SortingExperiment(String[] args){
+        super(args);
+    }
+
+    public SortingExperiment(){
     }
 
     public static BigOh doubleExp(String name){
@@ -112,7 +129,7 @@ public class SortingExperiment extends DoublingExperiment{
 
         long endTime = System.nanoTime();
 
-        System.out.println("Time = "+(endTime-startTime));
+        /* System.out.println("Time = "+(endTime-startTime)); */
 
         return (double) endTime - startTime;
 
