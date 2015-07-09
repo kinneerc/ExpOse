@@ -63,11 +63,11 @@ public class ExperimentResults{
         this(null, new String[] {"Doubles","Time"},false);
     }
 
-    public void writeMetafile(int termcode, long runtime, String schema, String criterion, String generator, String doubler, String answer){
+    public void writeMetafile(int termcode, long runtime, String schema, String criterion, String generator, String doubler, String subFeature,String answer){
         try{
-        String filename = "META"+schema+"_"+criterion+"_"+generator+"_"+doubler+".csv";
-        String header = "\"schema\",\"criterion\",\"generator\",\"doubler\",\"termcode\",\"runtime\",\"bigOh\"";
-        String content = "\""+schema+"\",\""+criterion+"\",\""+generator+"\",\""+doubler+"\","+termcode+","+runtime+",\""+answer+"\"";
+        String filename = "META"+schema+"_"+criterion+"_"+generator+"_"+doubler+"_"+subFeature+".csv";
+        String header = "\"schema\",\"criterion\",\"generator\",\"doubler\",\"subdoubler\",\"termcode\",\"runtime\",\"bigOh\"";
+        String content = "\""+schema+"\",\""+criterion+"\",\""+generator+"\",\""+doubler+"\",\""+subFeature+"\","+termcode+","+runtime+",\""+answer+"\"";
 
         PrintWriter pw = new PrintWriter("data/"+filename);
         pw.println(header);

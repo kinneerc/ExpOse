@@ -53,7 +53,7 @@ public class SchemaGenExperiment extends DoublingExperiment {
             this.exp = exp;
         }
         public void run() {
-            exp.data.writeMetafile(exp.termCode, exp.runTime, exp.params.schema, exp.params.criterion, exp.params.datagenerator, exp.params.doubler, "KILLED");
+            exp.data.writeMetafile(exp.termCode, exp.runTime, exp.params.schema, exp.params.criterion, exp.params.datagenerator, exp.params.doubler, exp.params.subFeature,"KILLED");
         }
     }
 
@@ -96,7 +96,7 @@ public class SchemaGenExperiment extends DoublingExperiment {
         ReverseEngineer eng = new ReverseEngineer();
         eng.loadData(exp.getData());
         BigOh ans = eng.analyzeData();
-        exp.data.writeMetafile(exp.termCode, exp.runTime,"Generated", params.criterion, params.datagenerator, params.doubler,ans.toString());
+        exp.data.writeMetafile(exp.termCode, exp.runTime,"Generated", params.criterion, params.datagenerator, params.doubler, params.subFeature, ans.toString());
 
         if (params.verbose){
             exp.printBigOh();
