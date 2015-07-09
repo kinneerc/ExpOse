@@ -47,8 +47,8 @@ public class DefaultSuite extends BenchMarkSuite {
         size = 0;
         benchmarks = new ArrayList<BenchMark>();
 
-        benchmarks.add(new JosephusExperiment(getArgs()));
-        size++;
+        /* benchmarks.add(new JosephusExperiment(getArgs())); */
+        /* size++; */
         // get sorting algorithms
         for (String sortAlg : SortingExperiment.algs){
             benchmarks.add(new SortingExperiment(getArgs(),sortAlg));
