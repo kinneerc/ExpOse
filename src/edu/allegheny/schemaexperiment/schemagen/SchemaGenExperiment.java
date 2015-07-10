@@ -65,7 +65,7 @@ public class SchemaGenExperiment extends DoublingExperiment {
             params.csv = "data/DATA"+params.schema+"_"+params.criterion+"_"+params.datagenerator+"_"+params.doubler+"_"+params.subFeature+".csv";
         }
 
-        String[] settings = {params.criterion,params.datagenerator,params.doubler,params.subFeature};
+        String[] settings = {"Generated",params.criterion,params.datagenerator,params.doubler,params.subFeature};
 
         SchemaGenExperiment exp = new SchemaGenExperiment(params, args, settings);
 
