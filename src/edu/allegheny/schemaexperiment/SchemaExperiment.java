@@ -35,7 +35,7 @@ public class SchemaExperiment extends DoublingExperiment{
             this.exp = exp;
         }
         public void run() {
-             exp.data.writeMetafile(exp.termCode, exp.runTime, exp.params.schema, exp.params.criterion, exp.params.datagenerator, exp.params.doubler, "KILLED");
+             exp.data.writeMetafile(exp.termCode, exp.runTime, exp.params.schema, exp.params.criterion, exp.params.datagenerator, exp.params.doubler, "NA","KILLED");
         }
     }
 
@@ -100,7 +100,7 @@ public class SchemaExperiment extends DoublingExperiment{
         BigOh ans = eng.analyzeData();
 
 
-        exp.data.writeMetafile(exp.termCode, exp.runTime, schema, params.criterion, params.datagenerator, params.doubler,ans.toString());
+        exp.data.writeMetafile(exp.termCode, exp.runTime, schema, params.criterion, params.datagenerator, params.doubler,"NA",ans.toString());
 
         if (params.verbose){
             exp.printBigOh();
