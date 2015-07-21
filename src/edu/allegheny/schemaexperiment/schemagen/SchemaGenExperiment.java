@@ -205,7 +205,7 @@ public class SchemaGenExperiment extends DoublingExperiment {
                                     needed = Math.ceil(needed*2.5); 
                                     schemaSize[0] = (int) needed; schemaSize[1] = (int) needed; 
                                     break;
-                    case 5: schemaSize[5] = 1; schemaSize[0] = maxSize; schemaSize[1] = maxSize; break;
+                    case 5: schemaSize[5] = 1; schemaSize[1] = maxSize; break;
                     case 3: schemaSize[3] = 1; schemaSize[0] = maxSize; schemaSize[1] = maxSize; break;
                     case -1: schemaSize = new int[] {2,40,1,1,1,1,1,10,1}; break;
                 }
@@ -230,7 +230,7 @@ public class SchemaGenExperiment extends DoublingExperiment {
                                     schemaSize[0] = (int) needed; schemaSize[1] = (int) (needed*needed);
                                     schemaSize[4] = 1;
                                     break;
-                    case 5: schemaSize[5] = 1; schemaSize[0] = maxSize; schemaSize[1] = maxSize*maxSize; break;
+                    case 5: schemaSize[5] = 1; schemaSize[1] = maxSize; break;
                     case 3: schemaSize[3] = 1; schemaSize[0] = maxSize; schemaSize[1] = maxSize*maxSize; break;
                     case -1: schemaSize = new int[] {2,40,1,1,1,1,1,10,1}; break;
                 }
