@@ -71,11 +71,14 @@ public class Generator{
                 /* System.out.println(primaryKeys+" > "+tables); */
                 throw new SchemaGenException("More PRIMARY KEYs than tables.");
             }
+            /*
             if(uniques > tables){
-                /* System.out.println(uniques+" > "+tables); */
+                
                 throw new SchemaGenException("More UNIQUEs than tables.");
+                
 
             }
+            */
 
             //TODO validation for foriegnKeys, and checks
 
