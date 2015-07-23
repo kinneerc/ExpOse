@@ -1,11 +1,24 @@
 #!/bin/bash
 
 declare -a criterions=(
+"criterionAPC"
 "ICC"
+"AICC"
+"CondAICC"
+"ClauseAICC"
+"NCC"
+"ANCC"
+"UCC"
+"AUCC"
 )
 
 declare -a datagenerators=(
+"avsDefaults"
+"avs"
+"directedRandomDefaults"
 "directedRandom"
+"random"
+"randomDefaults"
 )
 
 declare -a doublersWSub=(
@@ -31,6 +44,7 @@ declare -a subDoublers=(
 export CLASSPATH="bin:lib/*:."
 
 classname="edu.allegheny.schemaexperiment.schemagen.SchemaGenExperiment"
+
 
 for criterion in "${criterions[@]}" 
 do
