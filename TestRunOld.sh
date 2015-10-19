@@ -5,11 +5,24 @@ mkdir data
 mkdir tuning
 
 declare -a criterions=(
+"criterionAPC"
 "ICC"
+"AICC"
+"CondAICC"
+"ClauseAICC"
+"NCC"
+"ANCC"
+"UCC"
+"AUCC"
 )
 
 declare -a datagenerators=(
+"avsDefaults"
+"avs"
+"directedRandomDefaults"
 "directedRandom"
+"random"
+"randomDefaults"
 )
 
 declare -a schemas=(
@@ -39,7 +52,7 @@ do
         do
             for doubler in "${doublers[@]}"
             do
-                java $classname --criterion $criterion --datagenerator $datagenerator --schema $schema --doubler $doubler --maxTime 36 --overwrite --minDoubles 25
+                java $classname --criterion $criterion --datagenerator $datagenerator --schema $schema --doubler $doubler --maxTime 50 --overwrite --minDoubles 15
 
             done
         done
