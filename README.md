@@ -1,5 +1,5 @@
 # ExpOseSA
-ExpOse extened to support research with SchemaAnalyst, SA cannot yet be published, so this version must be private
+ExpOse extened to support research with SchemaAnalyst.
 
 The `schemagen` branch contains modifications made after the SEKE'15 conference paper, including the schemagen tool for
 automatically generating database schemas, and the tuning capabilities for deciding the number of executions per trial.
