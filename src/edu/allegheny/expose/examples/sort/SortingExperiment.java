@@ -7,7 +7,7 @@ import edu.allegheny.expose.DoublingExperiment;
 import edu.allegheny.expose.ReverseEngineer;
 import edu.allegheny.expose.examples.sort.*;
 
-public class SortingExperiment extends DoublingExperiment{
+public class SortingExperiment extends DoublingExperiment {
 
     protected int alg;
     protected String name;
@@ -15,7 +15,7 @@ public class SortingExperiment extends DoublingExperiment{
 
     public static String[] algs = {"quick", "insertion", "merge", "selection", "bubble"};
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
         String[] nargs = new String[args.length-1];
 
@@ -154,6 +154,5 @@ public class SortingExperiment extends DoublingExperiment{
         return values;
 
     }
-
 
 }
