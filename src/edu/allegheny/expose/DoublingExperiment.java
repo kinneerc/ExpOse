@@ -35,7 +35,7 @@ public abstract class DoublingExperiment{
     private double giveUpTime;
 
     /** Parameters object, default settings handled in this class */
-    protected DoublingExperimentParams params; 
+    protected DoublingExperimentParams params;
 
     /**
      * Constructor initializes settings
@@ -45,9 +45,9 @@ public abstract class DoublingExperiment{
      * @param expParams any additional information to write to CSV file
      * @see #DoublingExperimentParams
      */
-    public DoublingExperiment(DoublingExperimentParams params, String[] args, String[] CSVheader, 
+    public DoublingExperiment(DoublingExperimentParams params, String[] args, String[] CSVheader,
             String[] expParams){
-        this.params = params; 
+        this.params = params;
         JCommander commander = new JCommander(params,args);
 
         if (params.help){
@@ -104,7 +104,7 @@ public abstract class DoublingExperiment{
 
         // first check to see that we've had at least the min number of runs
         if (data.aggregate().size() < minRuns)
-            return false;        
+            return false;
 
         // find ratio of last lookBack runs
         double[] ratio = new double[lookBack];
@@ -169,7 +169,7 @@ public abstract class DoublingExperiment{
             while(!checkConvergence()){
 
                 if(doubles > 1){
-                    // check if we think the next run will take too long 
+                    // check if we think the next run will take too long
                     if (checkGiveUp()){
                         break;
                     }
@@ -257,7 +257,7 @@ public abstract class DoublingExperiment{
         }
 
         // change minruns to be the lookBack relative to current runs
-        // first, make sure we cannot lower minRuns 
+        // first, make sure we cannot lower minRuns
         if (minRuns < doubles + lookBack - 1)
             minRuns = doubles + lookBack - 1;
 
@@ -275,7 +275,7 @@ public abstract class DoublingExperiment{
 
         // first check to see that we've had enough runs to calclulate a ratio
         if (data.aggregate().size() < 2)
-            return false;        
+            return false;
 
         // find ratio of last run
         double ratio = data.getRatio(0);
