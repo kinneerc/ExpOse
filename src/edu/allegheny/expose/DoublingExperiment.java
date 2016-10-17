@@ -224,7 +224,7 @@ public abstract class DoublingExperiment{
         predictedTime *= 2.77778e-13;
 
         if (verbose)
-            System.out.println("Predicted Time for next dub: "+predictedTime);
+            System.out.println("Predicted Time for next double: "+predictedTime);
 
         if (predictedTime > giveUpTime)
             return true;
