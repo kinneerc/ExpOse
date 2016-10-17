@@ -26,19 +26,19 @@ public class SortingExperiment extends DoublingExperiment{
         exp.name = args[0];
 
         switch (exp.name){
-            case "quick": 
+            case "quick":
                     exp.alg = 1;
                     break;
-            case "insertion": 
+            case "insertion":
                     exp.alg = 2;
                     break;
-            case "merge": 
+            case "merge":
                     exp.alg = 3;
                     break;
             case "selection":
                     exp.alg = 4;
                     break;
-            case "bubble": 
+            case "bubble":
                     exp.alg = 5;
                     break;
         }
@@ -66,19 +66,19 @@ public class SortingExperiment extends DoublingExperiment{
         exp.name = name;
 
         switch (name){
-            case "quick": 
+            case "quick":
                     exp.alg = 1;
                     break;
-            case "insertion": 
+            case "insertion":
                     exp.alg = 2;
                     break;
-            case "merge": 
+            case "merge":
                     exp.alg = 3;
                     break;
             case "selection":
                     exp.alg = 4;
                     break;
-            case "bubble": 
+            case "bubble":
                     exp.alg = 5;
                     break;
         }
