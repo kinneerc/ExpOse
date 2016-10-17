@@ -1,4 +1,4 @@
-<project default="compile"> 
+<project default="compile">
 
     <!-- SETUP VARIABLES AND PATHS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
     <property name="lib.dir" value="lib" />
@@ -24,13 +24,13 @@
         <delete dir="${report.dir}"/>
     </target>
 
-    <!-- COMPILING TASK - "ant compile" -->  
+    <!-- COMPILING TASK - "ant compile" -->
     <target name="compile">
         <mkdir dir="${build.dir}"/>
         <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false" debug="true" debuglevel="vars,lines,source">
             <classpath refid="build.classpath"/>
-            <compilerarg value="-Xlint:unchecked"/> 
-            <compilerarg value="-Xlint:deprecation"/> 
+            <compilerarg value="-Xlint:unchecked"/>
+            <compilerarg value="-Xlint:deprecation"/>
         </javac>
     </target>
 
@@ -62,7 +62,7 @@
     <target name="RunExperiment" depends="compile">
         <java fork="true" classname="edu.allegheny.worstcaseanalyst.schemaexperiment.RunExperiment" maxmemory="3072m">
             <classpath refid="build.classpath" />
-            <arg value="" /> 
+            <arg value="" />
         </java>
     </target>
 
