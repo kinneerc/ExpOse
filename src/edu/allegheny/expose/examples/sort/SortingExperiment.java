@@ -12,7 +12,6 @@ public class SortingExperiment extends DoublingExperiment{
     protected int alg;
     protected String name;
     private int[] n;
-    private static boolean validAlg;    // to check validity of algorithm name input
 
     public static String[] algs = {"quick", "insertion", "merge", "selection", "bubble"};
 
@@ -26,7 +25,7 @@ public class SortingExperiment extends DoublingExperiment{
         SortingExperiment exp = new SortingExperiment(nargs);
         exp.name = args[0];
 
-        validAlg = false;    // input assumed to be invalid algorithm
+        boolean validAlg = false;    // input assumed to be invalid algorithm
         for (int i = 0; i < algs.length; i++) {    // for each valid algorithm option...
           if (algs[i].equals(exp.name)) {    // check if input equals valid algorithm option
             validAlg = true;    // true when input matches at least one valid algorithm
@@ -34,6 +33,7 @@ public class SortingExperiment extends DoublingExperiment{
         }
         if (!validAlg) {    // if input is invalid...
           System.out.println("Sorry, that is not a valid \"Sorting\" algorithm.");
+          System.out.println("Supported algorithms are: " + Arrays.toString(algs));
           return;    // exit main method
         }
 
