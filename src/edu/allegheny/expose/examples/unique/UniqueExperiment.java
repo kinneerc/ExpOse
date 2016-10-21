@@ -12,6 +12,7 @@ public class UniqueExperiment extends DoublingExperiment {
   protected int alg;
   protected String name;
   private int[] n;
+  private static boolean validAlg;    // to check validity of algorithm name input
 
   public static String[] algs = {"unique1", "unique2"};
 
@@ -25,6 +26,17 @@ public class UniqueExperiment extends DoublingExperiment {
 
     UniqueExperiment exp = new UniqueExperiment(nargs);
     exp.name = args[0];
+
+    validAlg = false;    // input assumed to be invalid algorithm
+    for (int i = 0; i < algs.length; i++) {    // for each valid algorithm option...
+      if (algs[i].equals(exp.name)) {    // check if input equals valid algorithm option
+        validAlg = true;    // true when input matches at least one valid algorithm
+      }
+    }
+    if (!validAlg) {    // if input is invalid...
+      System.out.println("Sorry, that is not a valid \"Unique\" algorithm.");
+      return;    // exit main method
+    }
 
     switch (exp.name) {
       case "unique1":

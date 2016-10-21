@@ -15,7 +15,7 @@ public class ReverseEngineerTest{
         eng.loadData("tests/bubblesort.csv");
         BigOh res = eng.analyzeData();
         ComplexityClass ans = res.getCompClass();
-        Assert.assertEquals(ans, ComplexityClass.QUADRADIC);
+        Assert.assertEquals(ans, ComplexityClass.QUADRATIC);    // changed "QUADRADIC"to "QUADRATIC"
     }
 
 
@@ -55,5 +55,5 @@ public class ReverseEngineerTest{
         Assert.assertEquals(ans, ComplexityClass.LINEAR);
     }
 
-    
+
 }

@@ -14,14 +14,14 @@ public class ReverseEngineer{
      * It will have already been sorted by times doubled
      */
     private ExperimentResults data;
-    
+
     /**
      * Data aggregated by times doubled
      */
     private List<Double[]> avg;
 
     /**
-     * Percentage that min / max of a dataset must be within to be considered 
+     * Percentage that min / max of a dataset must be within to be considered
      * consistant
      */
     private static double spreadTolerance = .10;
@@ -75,7 +75,7 @@ public class ReverseEngineer{
         data.readCSV(fileName);
     }
 
-   
+
     /**
      * Analyze the results of a doubling experiment.
      * @return BigOh determined from data
@@ -105,7 +105,7 @@ public class ReverseEngineer{
 
         BigOh result = new BigOh();
 
-        // now in the case of N^0 or N^1, get more specific 
+        // now in the case of N^0 or N^1, get more specific
         if ( exp == 0 ){
             // check for constant time
             if (checkConstant()){
@@ -120,7 +120,7 @@ public class ReverseEngineer{
                 result.setCompClass(ComplexityClass.LINEARITHMIC);
             }
         }else if (exp == 2){
-                result.setCompClass(ComplexityClass.QUADRADIC);
+                result.setCompClass(ComplexityClass.QUADRATIC);    // changed "QUADRADIC"to "QUADRATIC"
         }else if (exp == 3){
             result.setCompClass(ComplexityClass.CUBIC);
         }else{
@@ -167,7 +167,7 @@ public class ReverseEngineer{
      * @return true if the data is deemed O(n)
      */
     protected boolean checkConstant(){
-    
+
         aggregate();
 
         // fetch last 3 elements
@@ -182,7 +182,7 @@ public class ReverseEngineer{
      * @return true if the data is deemed O(nlog(n))
      */
     protected boolean checkLinear(){
-    
+
         aggregate();
 
         // fetch last 3 elements
@@ -191,13 +191,13 @@ public class ReverseEngineer{
         // divide by n
         double[] div = {last[0] / 4, last[1] / 2, last[2] };
 
-        // check to see that these values are within tolerance of each other 
+        // check to see that these values are within tolerance of each other
         return checkWithinRange(div, spreadTolerance);
 
     }
-    
-    
-    
 
-    
+
+
+
+
 }

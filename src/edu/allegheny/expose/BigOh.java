@@ -27,7 +27,7 @@ public class BigOh{
 
             this.compClass = compClass;
 
-            if (compClass == ComplexityClass.QUADRADIC)
+            if (compClass == ComplexityClass.QUADRATIC)    // changed "QUADRADIC"to "QUADRATIC"
                 exponent = 2;
             else if (compClass == ComplexityClass.CUBIC)
                 exponent = 3;
@@ -70,7 +70,7 @@ public class BigOh{
         else
             return compClass.toString();
     }
-    
+
     public boolean equals(BigOh o){
         if (o.compClass == this.compClass && o.exponent == this.exponent){
             return true;
@@ -80,5 +80,3 @@ public class BigOh{
     }
 
 }
-
-
