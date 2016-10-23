@@ -4,7 +4,7 @@ import edu.allegheny.expose.tune.*;
 
 public class Tuner {
 
-    private static final double initialTolerance = 100;
+    private static final double initialTolerance = 30;
     private static final int trials = 2;
     /**
      * Desired success rate for tuning.
