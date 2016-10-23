@@ -7,7 +7,15 @@ import structure.*;
 
 public class BubbleSort
 {
-
+    /* Bubble Sort is a comparable sort method that works by going through the data set
+ * by comparing adjacent data values from the beginning of the array to the end and arranging it accordingly
+ * in ascending order.It keeps doing this until the whole array is sorted.
+ * ReadStream r = new ReadStream is constructed to read everything typed in System.in into a vector form.
+ * It has no parameters.
+ * r.readInt()  reads an integer from input stream
+ * @param int i, int n,int numSorted, int index, int data[]
+ *
+*/
 
     public static void main(String args[])
     {
