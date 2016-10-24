@@ -1,11 +1,11 @@
-package edu.allegheny.expose; 
+package edu.allegheny.expose;
 
 import com.beust.jcommander.Parameter;
 
 public class DoublingExperimentParams{
 
     @Parameter(names = {"--trials"}, description = "Number of trials to run for each double")
-        public int trials = 10;
+        public int trials = 1000;
 
     @Parameter(names = {"--convergence"}, description = "Experiment convergent if diff < this")
         public double convergence = .4;
@@ -20,7 +20,7 @@ public class DoublingExperimentParams{
         public int tuningTries = 20;
 
     @Parameter(names = {"--minDoubles"}, description = "Minimum number of doubles to try")
-        public int minRuns = 5;
+        public int minRuns = 20;
 
     @Parameter(names = {"--lookBack"}, description = "Number of ratios to compair for convergence")
         public int lookBack = 4;
@@ -29,7 +29,7 @@ public class DoublingExperimentParams{
         public boolean verbose = false;
 
     @Parameter(names = {"--giveUp","--maxTime"}, description = "Max time for a single trial in hours")
-        public int giveUpTime = 8;
+        public int giveUpTime = 0.25;
 
     @Parameter(names = {"--overwrite"}, description = "Overwrite existing CSV rather than append")
         public boolean overwrite = false;
