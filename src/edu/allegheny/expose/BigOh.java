@@ -16,7 +16,7 @@ public class BigOh{
 
     /**
      *The bigOh method calls the setCompClass method
-     *@param compClass The compClass that will be set
+     *@param compClass the compClass that will be set
      *@return Nothing -- results in a function call
      */
     public BigOh(ComplexityClass compClass){
