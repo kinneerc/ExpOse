@@ -6,7 +6,7 @@ public enum ComplexityClass{
     LOGARITHMIC,
     LINEAR,
     LINEARITHMIC,
-    QUADRADIC,
+    QUADRATIC,    // changed "QUADRADIC"to "QUADRATIC"
     CUBIC,
     POWER,
     EXPONENTIAL;
